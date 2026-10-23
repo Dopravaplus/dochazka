@@ -135,7 +135,7 @@ function fmtH(h){ return String(Math.round(h * 100) / 100).replace('.', ','); }
 function busy(on, t){ $('busy').classList.toggle('hidden', !on); if(t) $('busyText').textContent = t; }
 function msg(id, type, text){ const el = $(id); el.className = 'msg ' + (type || ''); el.textContent = text || ''; }
 /* V2.0: volání serveru (Apps Script „Docházka do mobilu“) přes internet – stránka běží mimo Google, bez šedého pruhu */
-const API_URL = 'https://script.google.com/macros/s/AKfycbyX7rO09p-2zUdZoR0ISi_ZlgSblYihTW7CFxqhdRYReiJaQXy-3fDi3_QmaRdM0M/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbyX7rO09p-2zUdZoR0ISi_ZlgSblYihTW7CFxdqhRdYReiJaQXy-3fDi3_QmaRdM0M/exec';
 async function call(fn, arg){
   let r;
   try{
