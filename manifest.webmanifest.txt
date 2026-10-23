@@ -1,0 +1,26 @@
+{
+  "name": "Docházka Dopravaplus",
+  "short_name": "Docházka",
+  "description": "Docházka řidičů a závozníků Dopravaplus",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f2f4f7",
+  "theme_color": "#1769e0",
+  "lang": "cs",
+  "icons": [
+    {
+      "src": "https://lh3.googleusercontent.com/d/11JUdBeVp9twZl0NZfWGKxXn_COflfcW9=s192",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://lh3.googleusercontent.com/d/11JUdBeVp9twZl0NZfWGKxXn_COflfcW9=s512",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
