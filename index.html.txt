@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1769e0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Docházka">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="https://lh3.googleusercontent.com/d/11JUdBeVp9twZl0NZfWGKxXn_COflfcW9=s192">
+<link rel="apple-touch-icon" href="https://lh3.googleusercontent.com/d/11JUdBeVp9twZl0NZfWGKxXn_COflfcW9=s180">
+<title>Docházka Dopravaplus</title>
+<style>
+:root{--blue:#1769e0;--blue2:#1257c0;--bg:#f2f4f7;--card:#fff;--text:#101828;--muted:#667085;--line:#e4e7ec;--green:#067647;--greenBg:#ecfdf3;--amber:#b54708;--amberBg:#fffaeb;--red:#b42318;--redBg:#fef3f2}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;-webkit-text-size-adjust:100%}
+.top{background:var(--blue);color:#fff;padding:calc(14px + env(safe-area-inset-top)) 16px 16px;position:sticky;top:0;z-index:5}
+.top .logo{width:38px;height:38px;border-radius:9px;background:#fff;object-fit:cover;flex:0 0 auto}
+.top .brand{display:flex;align-items:center;gap:10px}
+.top h1{margin:0;font-size:18px;font-weight:800}
+.top .sub{font-size:13px;opacity:.9;margin-top:2px}
+.top .row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.top button{background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:10px;padding:7px 12px;font-size:14px;font-weight:700}
+.wrap{max-width:560px;margin:0 auto;padding:14px 14px 40px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;margin-bottom:14px;box-shadow:0 1px 2px rgba(16,24,40,.05)}
+.card h2{margin:0 0 12px;font-size:16px;font-weight:800}
+label{display:block;font-size:13px;font-weight:700;color:#344054;margin:0 0 6px}
+input,select,textarea{width:100%;font-size:17px;padding:12px;border:1px solid #d0d5dd;border-radius:12px;background:#fff;color:var(--text);font-family:inherit;-webkit-appearance:none;appearance:none}
+textarea{min-height:70px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-shadow:0 0 0 3px rgba(23,105,224,.15)}
+.f{margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.btn{width:100%;border:0;border-radius:12px;padding:14px;font-size:17px;font-weight:800;color:#fff;background:var(--blue)}
+.btn:active{background:var(--blue2)}
+.btn:disabled{opacity:.55}
+.btn.sec{background:#fff;color:#344054;border:1px solid #d0d5dd}
+.hrs{font-size:14px;color:var(--muted);margin:-2px 0 12px}
+.hrs b{color:var(--text)}
+.msg{border-radius:12px;padding:11px 13px;font-size:14px;font-weight:600;margin-bottom:12px;display:none}
+.msg.ok{display:block;background:var(--greenBg);color:var(--green)}
+.msg.err{display:block;background:var(--redBg);color:var(--red)}
+.item{border-top:1px solid var(--line);padding:12px 0}
+.item:first-of-type{border-top:0;padding-top:0}
+.item .h{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.item .d{font-weight:800}
+.item .t{font-size:15px;margin-top:3px}
+.item .n{font-size:13px;color:var(--muted);margin-top:3px}
+.chip{font-size:12px;font-weight:800;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.chip.wait{background:var(--amberBg);color:var(--amber)}
+.chip.ok{background:var(--greenBg);color:var(--green)}
+.chip.no{background:var(--redBg);color:var(--red)}
+.item .acts{display:flex;gap:8px;margin-top:8px}
+.item .acts button{flex:1;border-radius:10px;padding:9px;font-size:14px;font-weight:700;border:1px solid #d0d5dd;background:#fff;color:#344054}
+.item .acts button.del{color:var(--red);border-color:#fda29b}
+.reason{font-size:13px;color:var(--red);margin-top:4px;font-weight:600}
+.empty{color:var(--muted);font-size:14px}
+.hint{font-size:12.5px;color:var(--muted);margin-top:10px;line-height:1.4}
+.hidden{display:none !important}
+.busy{position:fixed;inset:0;background:rgba(16,24,40,.25);display:flex;align-items:center;justify-content:center;z-index:50}
+.busy div{background:#fff;border-radius:14px;padding:16px 20px;font-weight:700}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="row">
+    <div class="brand"><img class="logo" src="https://lh3.googleusercontent.com/d/11JUdBeVp9twZl0NZfWGKxXn_COflfcW9=s192" alt=""><div><h1>Docházka</h1><div class="sub" id="topSub">Dopravaplus – řidiči a závozníci</div></div></div>
+    <button id="logoutBtn" class="hidden" onclick="logout()">Odhlásit</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- Přihlášení -->
+  <div id="loginCard" class="card">
+    <h2>Přihlášení</h2>
+    <div id="loginMsg" class="msg"></div>
+    <div class="f"><label for="lName">Jméno</label><select id="lName"><option value="">Načítám…</option></select></div>
+    <div class="f"><label for="lPin">PIN</label><input id="lPin" type="password" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="••••"></div>
+    <button class="btn" id="loginBtn" onclick="login()">Přihlásit</button>
+    <div class="hint">PIN vám přidělí dispečink. Když ho zapomenete, požádejte o nový.</div>
+  </div>
+
+  <!-- Zápis dne -->
+  <div id="formCard" class="card hidden">
+    <h2 id="formTitle">Zapsat docházku</h2>
+    <div id="formMsg" class="msg"></div>
+    <div class="f"><label for="fDate">Den</label><input id="fDate" type="date"></div>
+    <div class="grid2">
+      <div class="f"><label for="fFrom">OD</label><input id="fFrom" type="time"></div>
+      <div class="f"><label for="fTo">DO</label><input id="fTo" type="time"></div>
+    </div>
+    <div class="f"><label for="fPause">Pauza</label>
+      <select id="fPause">
+        <option value="0">bez pauzy</option><option value="0.25">15 minut</option><option value="0.5">30 minut</option>
+        <option value="0.75">45 minut</option><option value="1">1 hodina</option><option value="1.5">1,5 hodiny</option><option value="2">2 hodiny</option>
+      </select>
+    </div>
+    <div class="hrs" id="fHours"></div>
+    <div class="f"><label for="fNote">Poznámka (nepovinné)</label><textarea id="fNote" maxlength="300" placeholder="např. čekání na vykládku, oprava vozidla…"></textarea></div>
+    <button class="btn" id="sendBtn" onclick="send()">Odeslat dispečinku</button>
+    <button class="btn sec hidden" id="cancelEditBtn" style="margin-top:8px" onclick="resetForm()">Zrušit úpravu</button>
+    <div class="hint">Zápis se odešle ke schválení dispečinku. Dokud ho dispečink nepřevezme, můžete ho upravit nebo smazat.</div>
+  </div>
+
+  <!-- Moje zápisy -->
+  <div id="listCard" class="card hidden">
+    <h2>Moje zápisy</h2>
+    <div id="list"><div class="empty">Zatím nic.</div></div>
+  </div>
+
+</div>
+
+<div id="busy" class="busy hidden"><div id="busyText">Načítám…</div></div>
+<div id="ask" class="busy hidden"><div style="width:min(340px,90vw)"><div id="askText" style="margin-bottom:14px;font-weight:700"></div>
+  <div class="grid2"><button class="btn sec" id="askNo">Zpět</button><button class="btn" id="askOk" style="background:#b42318">OK</button></div></div></div>
+
+<script>
+const S = { token:'', name:'', today:'', daysBack:31, editing:null, entries:[] };
+const store = {
+  get(k){ try{ return localStorage.getItem(k) || ''; }catch(e){ return ''; } },
+  set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} },
+  del(k){ try{ localStorage.removeItem(k); }catch(e){} }
+};
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const WD = ['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
+function dayLabel(iso){
+  const p = iso.split('-').map(Number); const d = new Date(p[0], p[1]-1, p[2], 12);
+  return `${WD[d.getDay()]} ${String(p[2]).padStart(2,'0')}.${String(p[1]).padStart(2,'0')}.${p[0]}`;
+}
+function fmtH(h){ return String(Math.round(h * 100) / 100).replace('.', ','); }
+function busy(on, t){ $('busy').classList.toggle('hidden', !on); if(t) $('busyText').textContent = t; }
+function msg(id, type, text){ const el = $(id); el.className = 'msg ' + (type || ''); el.textContent = text || ''; }
+/* V2.0: volání serveru (Apps Script „Docházka do mobilu“) přes internet – stránka běží mimo Google, bez šedého pruhu */
+const API_URL = 'https://script.google.com/macros/s/AKfycbyX7rO09p-2zUdZoR0ISi_ZlgSblYihTW7CFxqhdRYReiJaQXy-3fDi3_QmaRdM0M/exec';
+async function call(fn, arg){
+  let r;
+  try{
+    r = await fetch(API_URL, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, arg: arg || {} }) });
+  }catch(e){ throw 'Nepodařilo se spojit se serverem – zkontrolujte připojení k internetu.'; }
+  let j;
+  try{ j = await r.json(); }catch(e){ throw 'Server odpověděl neočekávaně – zkuste to prosím znovu.'; }
+  if(!j || !j.ok) throw (j && j.error) || 'Neznámá chyba.';
+  return j.data;
+}
+function isoShift(iso, days){
+  const p = iso.split('-').map(Number); const d = new Date(p[0], p[1]-1, p[2] + days, 12);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function calcHours(){
+  const f = $('fFrom').value, t = $('fTo').value, p = Number($('fPause').value) || 0;
+  if(!f || !t){ $('fHours').textContent = ''; return 0; }
+  const a = f.split(':').map(Number), b = t.split(':').map(Number);
+  let d = (b[0]*60 + b[1]) - (a[0]*60 + a[1]); if(d <= 0) d += 1440;
+  const h = Math.max(0, d / 60 - p);
+  $('fHours').innerHTML = `Odpracováno: <b>${fmtH(h)} h</b>`;
+  return h;
+}
+['fFrom','fTo','fPause'].forEach(id => document.addEventListener('DOMContentLoaded', () => $(id).addEventListener('input', calcHours)));
+
+/* ---------- přihlášení ---------- */
+async function init(){
+  const tok = store.get('m_token');
+  if(tok){
+    S.token = tok;
+    try{ await loadEntries(); showApp(); return; }catch(e){ store.del('m_token'); S.token = ''; }
+  }
+  showLogin();
+}
+async function showLogin(){
+  $('loginCard').classList.remove('hidden');
+  ['formCard','listCard','logoutBtn'].forEach(id => $(id).classList.add('hidden'));
+  $('topSub').textContent = 'Dopravaplus – řidiči a závozníci';
+  try{
+    const names = await call('mNames');
+    const last = store.get('m_name');
+    $('lName').innerHTML = '<option value="">— vyberte své jméno —</option>' + names.map(n => `<option ${n === last ? 'selected' : ''}>${esc(n)}</option>`).join('');
+  }catch(e){ msg('loginMsg', 'err', e); }
+}
+async function login(){
+  const name = $('lName').value, pin = $('lPin').value.trim();
+  if(!name || !pin){ msg('loginMsg', 'err', 'Vyberte jméno a zadejte PIN.'); return; }
+  $('loginBtn').disabled = true; busy(true, 'Přihlašuji…');
+  try{
+    const r = await call('mLogin', { name, pin });
+    S.token = r.token; S.name = r.name; S.today = r.today; S.daysBack = r.daysBack || 31;
+    store.set('m_token', r.token); store.set('m_name', r.name);
+    $('lPin').value = '';
+    await loadEntries();
+    showApp();
+  }catch(e){ msg('loginMsg', 'err', e); }
+  finally{ $('loginBtn').disabled = false; busy(false); }
+}
+async function logout(){
+  try{ await call('mLogout', { token:S.token }); }catch(e){}
+  store.del('m_token'); S.token = ''; S.entries = [];
+  showLogin();
+}
+document.addEventListener('keydown', e => { if(e.key === 'Enter' && document.activeElement === $('lPin')) login(); });
+
+/* ---------- zápisy ---------- */
+function showApp(){
+  $('loginCard').classList.add('hidden');
+  ['formCard','listCard','logoutBtn'].forEach(id => $(id).classList.remove('hidden'));
+  $('topSub').textContent = S.name;
+  resetForm();
+}
+async function loadEntries(){
+  const r = await call('mMyEntries', { token:S.token });
+  S.name = r.name; S.today = r.today; S.entries = r.entries || [];
+  renderList();
+}
+function resetForm(){
+  S.editing = null;
+  $('formTitle').textContent = 'Zapsat docházku';
+  $('cancelEditBtn').classList.add('hidden');
+  const d = $('fDate');
+  d.max = S.today; d.min = isoShift(S.today, -S.daysBack);
+  d.value = S.today; d.disabled = false;
+  $('fFrom').value = ''; $('fTo').value = ''; $('fPause').value = '0'; $('fNote').value = '';
+  calcHours();
+}
+function editEntry(id){
+  const e = S.entries.find(x => x.id === id); if(!e) return;
+  S.editing = id;
+  $('formTitle').textContent = 'Upravit ' + dayLabel(e.date);
+  $('fDate').value = e.date; $('fDate').disabled = true;
+  $('fFrom').value = e.from; $('fTo').value = e.to;
+  const opt = Array.from($('fPause').options).find(o => Number(o.value) === Number(e.pause));
+  $('fPause').value = opt ? opt.value : '0';
+  $('fNote').value = e.note || '';
+  $('cancelEditBtn').classList.remove('hidden');
+  calcHours(); msg('formMsg', '', '');
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+async function send(){
+  const date = $('fDate').value, from = $('fFrom').value, to = $('fTo').value;
+  if(!date){ msg('formMsg', 'err', 'Vyberte den.'); return; }
+  if(!from || !to){ msg('formMsg', 'err', 'Vyplňte čas OD a DO.'); return; }
+  if(!(calcHours() > 0)){ msg('formMsg', 'err', 'Z časů vychází 0 hodin – zkontrolujte OD, DO a pauzu.'); return; }
+  const dup = !S.editing && S.entries.find(x => x.date === date && x.state === 'Ke schválení');
+  $('sendBtn').disabled = true; busy(true, 'Odesílám…');
+  try{
+    const r = await call('mSubmit', { token:S.token, date, from, to, pause:$('fPause').value, note:$('fNote').value });
+    S.entries = r.entries || []; renderList();
+    msg('formMsg', 'ok', (dup || S.editing ? 'Zápis upraven' : 'Odesláno') + ` – ${dayLabel(date)}, ${from}–${to}. Čeká na schválení dispečinkem.`);
+    resetForm();
+  }catch(e){
+    if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); }
+    else msg('formMsg', 'err', e);
+  }finally{ $('sendBtn').disabled = false; busy(false); }
+}
+async function delEntry(id){
+  const e = S.entries.find(x => x.id === id); if(!e) return;
+  if(!(await ask('Smazat zápis ' + dayLabel(e.date) + '?', 'Smazat'))) return;
+  busy(true, 'Mažu…');
+  try{ const r = await call('mDelete', { token:S.token, id }); S.entries = r.entries || []; renderList(); if(S.editing === id) resetForm(); }
+  catch(err){ msg('formMsg', 'err', err); }
+  finally{ busy(false); }
+}
+/* potvrzení v aplikaci (bez dialogu prohlížeče) */
+function ask(text, okLabel){
+  return new Promise(res => {
+    const box = $('ask'); $('askText').textContent = text; $('askOk').textContent = okLabel || 'OK';
+    box.classList.remove('hidden');
+    const done = v => { box.classList.add('hidden'); $('askOk').onclick = null; $('askNo').onclick = null; res(v); };
+    $('askOk').onclick = () => done(true); $('askNo').onclick = () => done(false);
+  });
+}
+function renderList(){
+  const list = $('list');
+  if(!S.entries.length){ list.innerHTML = '<div class="empty">Zatím jste nic neodeslali.</div>'; return; }
+  list.innerHTML = S.entries.map(e => {
+    const chip = e.state === 'Převzato' ? '<span class="chip ok">Převzato</span>'
+      : (e.state === 'Zamítnuto' ? '<span class="chip no">Zamítnuto</span>' : '<span class="chip wait">Čeká na schválení</span>');
+    const pause = Number(e.pause) ? ` · pauza ${fmtH(e.pause)} h` : '';
+    return `<div class="item">
+      <div class="h"><span class="d">${esc(dayLabel(e.date))}</span>${chip}</div>
+      <div class="t">${esc(e.from)}–${esc(e.to)}${pause} · <b>${fmtH(e.hours)} h</b></div>
+      ${e.note ? `<div class="n">${esc(e.note)}</div>` : ''}
+      ${e.state === 'Zamítnuto' && e.reason ? `<div class="reason">Důvod: ${esc(e.reason)}</div>` : ''}
+      <div class="n">Odesláno ${esc(e.sent)}</div>
+      ${e.state === 'Ke schválení' ? `<div class="acts"><button onclick="editEntry('${esc(e.id)}')">Upravit</button><button class="del" onclick="delEntry('${esc(e.id)}')">Smazat</button></div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+init();
+</script>
+</body>
+</html>
