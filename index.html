@@ -8,6 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Docházka">
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -60,14 +61,48 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
 .hidden{display:none !important}
 .busy{position:fixed;inset:0;background:rgba(16,24,40,.25);display:flex;align-items:center;justify-content:center;z-index:50}
 .busy div{background:#fff;border-radius:14px;padding:16px 20px;font-weight:700}
+/* V3.0 dlaždice a vozidla */
+.tiles{display:grid;grid-template-columns:1fr;gap:12px}
+.tile{display:flex;align-items:center;gap:14px;width:100%;text-align:left;background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px;box-shadow:0 1px 2px rgba(16,24,40,.05);font-family:inherit;color:var(--text)}
+.tile:active{background:#f5f8ff}
+.tile .ic{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:26px;flex:0 0 auto}
+.tile .tt{font-size:17px;font-weight:800}
+.tile .ts{font-size:13px;color:var(--muted);margin-top:2px}
+.tile .ar{margin-left:auto;color:#98a2b3;font-size:22px}
+.ic.b{background:#eef4ff}.ic.g{background:#ecfdf3}.ic.a{background:#fffaeb}
+.grp{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.grp:first-of-type{border-top:0;margin-top:0;padding-top:0}
+.grp .gh{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:15px;margin-bottom:8px}
+.grp .gh span{font-size:12px;font-weight:800;border-radius:999px;padding:2px 9px}
+.gh .okc{background:var(--greenBg);color:var(--green)}.gh .bad{background:var(--redBg);color:var(--red)}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opt{border:1px solid #d0d5dd;background:#fff;border-radius:999px;padding:9px 13px;font-size:14.5px;font-weight:600;color:#344054;font-family:inherit;text-align:left}
+.opt.on{background:var(--redBg);border-color:#fda29b;color:var(--red)}
+.opt.on::before{content:'✕ ';font-weight:800}
+.allok{background:var(--greenBg);color:var(--green);border-radius:12px;padding:11px 13px;font-weight:700;font-size:14px}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.yn button{border:1px solid #d0d5dd;background:#fff;border-radius:12px;padding:13px;font-size:16px;font-weight:800;color:#344054;font-family:inherit}
+.yn button.on.y{background:var(--greenBg);border-color:#75e0a7;color:var(--green)}
+.yn button.on.n{background:var(--redBg);border-color:#fda29b;color:var(--red)}
+.warnbox{background:var(--redBg);color:var(--red);border-radius:12px;padding:11px 13px;font-weight:700;font-size:14px;margin-top:10px}
+.photos{display:flex;gap:10px;flex-wrap:wrap}
+.ph{width:96px;height:96px;border-radius:12px;border:1.5px dashed #b2bccc;background:#f9fafb;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:12px;color:var(--muted);font-weight:700;position:relative;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph .x{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;background:rgba(16,24,40,.65);color:#fff;border:0;font-size:15px;line-height:26px;padding:0}
+.ph input{position:absolute;inset:0;opacity:0}
+.ph .pi{font-size:26px;margin-bottom:2px}
+.conf{display:flex;gap:10px;align-items:flex-start;font-size:13.5px;line-height:1.4;color:#344054}
+.conf input{width:24px;height:24px;flex:0 0 auto;margin:0;-webkit-appearance:checkbox;appearance:checkbox}
+.kmhint{font-size:12.5px;color:var(--muted);margin-top:5px}
+.kmhint.w{color:var(--amber);font-weight:700}
 </style>
 </head>
 <body>
 
 <div class="top">
   <div class="row">
-    <div class="brand"><img class="logo" src="icon-192.png" alt=""><div><h1>Docházka</h1><div class="sub" id="topSub">Dopravaplus – řidiči a závozníci</div></div></div>
-    <button id="logoutBtn" class="hidden" onclick="logout()">Odhlásit</button>
+    <div class="brand"><img class="logo" src="icon-192.png" alt=""><div><h1 id="topTitle">Docházka</h1><div class="sub" id="topSub">Dopravaplus – řidiči a závozníci</div></div></div>
+    <button id="backBtn" class="hidden" onclick="goHome()">‹ Zpět</button><button id="logoutBtn" class="hidden" onclick="logout()">Odhlásit</button>
   </div>
 </div>
 
@@ -81,6 +116,59 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
     <div class="f"><label for="lPin">PIN</label><input id="lPin" type="password" inputmode="numeric" autocomplete="one-time-code" maxlength="8" placeholder="••••"></div>
     <button class="btn" id="loginBtn" onclick="login()">Přihlásit</button>
     <div class="hint">PIN vám přidělí dispečink. Když ho zapomenete, požádejte o nový.</div>
+  </div>
+
+  <!-- V3.0 Úvod s dlaždicemi -->
+  <div id="homeCard" class="hidden">
+    <div class="tiles">
+      <button class="tile" onclick="openView('att')"><span class="ic b">🕒</span><span><div class="tt">Docházka</div><div class="ts">Zapsat odpracovaný den</div></span><span class="ar">›</span></button>
+      <button class="tile" onclick="openView('check')"><span class="ic g">✅</span><span><div class="tt">Kontrola vozidla</div><div class="ts">Před jízdou / při převzetí vozidla</div></span><span class="ar">›</span></button>
+      <button class="tile" onclick="openView('fuel')"><span class="ic a">⛽</span><span><div class="tt">Tankování</div><div class="ts">Litry a stav km</div></span><span class="ar">›</span></button>
+    </div>
+  </div>
+
+  <!-- V3.0 Kontrola vozidla -->
+  <div id="checkCard" class="card hidden">
+    <h2>Kontrola vozidla</h2>
+    <div id="checkMsg" class="msg"></div>
+    <div class="f"><label for="cVeh">Vozidlo</label><select id="cVeh" onchange="kmHint('c')"></select></div>
+    <div class="f"><label for="cKm">Stav tachometru (km)</label><input id="cKm" type="number" inputmode="numeric" placeholder="např. 558600" oninput="kmHint('c')"><div class="kmhint" id="cKmHint"></div></div>
+    <div class="hint" style="margin:0 0 10px">Označte <b>jen závady</b>. Co neoznačíte, je v pořádku.</div>
+    <div id="cGroups"></div>
+    <div id="cDefBox" class="hidden" style="margin-top:14px">
+      <div class="f"><label for="cDesc">Popis závady</label><textarea id="cDesc" maxlength="1500" placeholder="Co je poškozené, kde se závada nachází a jak se projevuje"></textarea></div>
+      <div class="f"><label>Fotografie závady (max. 2 – detail + celek)</label><div class="photos" id="cPhotos"></div></div>
+    </div>
+    <div class="f" style="margin-top:12px"><label>Vozidlo je technicky způsobilé k provozu</label>
+      <div class="yn"><button type="button" id="cOkY" class="y" onclick="setOk('ANO')">ANO</button><button type="button" id="cOkN" class="n" onclick="setOk('NE')">NE</button></div>
+      <div id="cOkWarn" class="warnbox hidden">Jízda je zakázána. Neprodleně kontaktujte dispečera nebo odpovědnou osobu.</div>
+    </div>
+    <div class="f" style="margin-top:14px"><label class="conf"><input type="checkbox" id="cConfirm"><span id="cConfirmText"></span></label></div>
+    <button class="btn" id="cSend" onclick="sendCheck()">Odeslat kontrolu</button>
+  </div>
+
+  <!-- V3.0 Tankování -->
+  <div id="fuelCard" class="card hidden">
+    <h2>Tankování</h2>
+    <div id="fuelMsg" class="msg"></div>
+    <div class="f"><label for="tVeh">Vozidlo</label><select id="tVeh" onchange="kmHint('t')"></select></div>
+    <div class="f"><label for="tDate">Datum tankování</label><input id="tDate" type="date"></div>
+    <div class="grid2">
+      <div class="f"><label for="tKm">Stav tachometru (km)</label><input id="tKm" type="number" inputmode="numeric" placeholder="558600" oninput="kmHint('t')"></div>
+      <div class="f"><label for="tL">Natankováno (litry)</label><input id="tL" type="text" inputmode="decimal" placeholder="72,5"></div>
+    </div>
+    <div class="kmhint" id="tKmHint" style="margin:-6px 0 12px"></div>
+    <div class="f"><label for="tPay">Platba</label><select id="tPay" onchange="payHint()"></select></div>
+    <div class="f"><label id="tPhLabel">Fotka účtenky</label><div class="photos" id="tPhotos"></div><div class="hint" id="tPhHint" style="margin-top:6px"></div></div>
+    <div class="f"><label for="tNote">Poznámka (nepovinné)</label><textarea id="tNote" maxlength="300" placeholder="např. tankováno i AdBlue"></textarea></div>
+    <button class="btn" id="tSend" onclick="sendFuel()">Odeslat tankování</button>
+    <div class="hint">Tankování zkontroluje dispečink a zapíše do karty vozidla. Dokud se tak nestane, můžete ho smazat.</div>
+  </div>
+
+  <!-- V3.0 Moje záznamy vozidel -->
+  <div id="vehListCard" class="card hidden">
+    <h2 id="vehListTitle">Moje záznamy</h2>
+    <div id="vehList"><div class="empty">Zatím nic.</div></div>
   </div>
 
   <!-- Zápis dne -->
@@ -118,7 +206,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
   <div class="grid2"><button class="btn sec" id="askNo">Zpět</button><button class="btn" id="askOk" style="background:#b42318">OK</button></div></div></div>
 
 <script>
-const S = { token:'', name:'', today:'', daysBack:31, editing:null, entries:[] };
+const S = { token:'', name:'', today:'', daysBack:31, editing:null, entries:[], view:'' };
+const V = { data:null, defects:{}, ok:'', cPhotos:[], tPhotos:[] };
 const store = {
   get(k){ try{ return localStorage.getItem(k) || ''; }catch(e){ return ''; } },
   set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} },
@@ -163,6 +252,7 @@ function calcHours(){
 
 /* ---------- přihlášení ---------- */
 async function init(){
+  if(location.hash){ try{ history.replaceState(null, '', location.pathname + location.search); }catch(e){} }
   const tok = store.get('m_token');
   if(tok){
     S.token = tok;
@@ -172,7 +262,8 @@ async function init(){
 }
 async function showLogin(){
   $('loginCard').classList.remove('hidden');
-  ['formCard','listCard','logoutBtn'].forEach(id => $(id).classList.add('hidden'));
+  VIEWS_ALL.concat(['logoutBtn','backBtn']).forEach(id => $(id).classList.add('hidden'));
+  $('topTitle').textContent = 'Docházka';
   $('topSub').textContent = 'Dopravaplus – řidiči a závozníci';
   try{
     const names = await call('mNames');
@@ -196,7 +287,7 @@ async function login(){
 }
 async function logout(){
   try{ await call('mLogout', { token:S.token }); }catch(e){}
-  store.del('m_token'); S.token = ''; S.entries = [];
+  store.del('m_token'); S.token = ''; S.entries = []; V.data = null;
   showLogin();
 }
 document.addEventListener('keydown', e => { if(e.key === 'Enter' && document.activeElement === $('lPin')) login(); });
@@ -204,10 +295,37 @@ document.addEventListener('keydown', e => { if(e.key === 'Enter' && document.act
 /* ---------- zápisy ---------- */
 function showApp(){
   $('loginCard').classList.add('hidden');
-  ['formCard','listCard','logoutBtn'].forEach(id => $(id).classList.remove('hidden'));
-  $('topSub').textContent = S.name;
   resetForm();
+  showView('home');
 }
+/* V3.0: obrazovky – úvod (dlaždice), docházka, kontrola vozidla, tankování */
+const VIEWS = { home:['homeCard'], att:['formCard','listCard'], check:['checkCard','vehListCard'], fuel:['fuelCard','vehListCard'] };
+const VIEWS_ALL = ['homeCard','formCard','listCard','checkCard','fuelCard','vehListCard'];
+const TITLES = { home:'Dopravaplus', att:'Docházka', check:'Kontrola vozidla', fuel:'Tankování' };
+function showView(v){
+  S.view = v;
+  VIEWS_ALL.forEach(id => $(id).classList.toggle('hidden', VIEWS[v].indexOf(id) < 0));
+  $('logoutBtn').classList.toggle('hidden', v !== 'home');
+  $('backBtn').classList.toggle('hidden', v === 'home');
+  $('topTitle').textContent = TITLES[v];
+  $('topSub').textContent = S.name;
+  window.scrollTo(0, 0);
+}
+async function openView(v){
+  if(v !== 'home'){ try{ history.pushState({ v }, '', '#' + v); }catch(e){} }
+  showView(v);
+  if(v === 'att') return;
+  if(!V.data){
+    busy(true, 'Načítám vozidla…');
+    try{ V.data = await call('mVehInit', { token:S.token }); }
+    catch(e){ busy(false); if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); return; } msg(v === 'check' ? 'checkMsg' : 'fuelMsg', 'err', e); return; }
+    busy(false);
+  }
+  if(v === 'check') resetCheck(); else resetFuel();
+  renderVehList();
+}
+function goHome(){ if(location.hash){ try{ history.back(); return; }catch(e){} } showView('home'); }
+window.addEventListener('popstate', () => { if(S.token && S.view && S.view !== 'home') showView('home'); });
 async function loadEntries(){
   const r = await call('mMyEntries', { token:S.token });
   S.name = r.name; S.today = r.today; S.entries = r.entries || [];
@@ -285,6 +403,165 @@ function renderList(){
       <div class="n">Odesláno ${esc(e.sent)}</div>
       ${e.state === 'Ke schválení' ? `<div class="acts"><button onclick="editEntry('${esc(e.id)}')">Upravit</button><button class="del" onclick="delEntry('${esc(e.id)}')">Smazat</button></div>` : ''}
     </div>`;
+  }).join('');
+}
+
+/* ================= V3.0 VOZIDLA ================= */
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function fmtKm(n){ return String(Math.round(n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+function vehOptions(sel){
+  const last = store.get('m_veh');
+  const vs = (V.data && V.data.vehicles) || [];
+  $(sel).innerHTML = '<option value="">— vyberte vozidlo —</option>' + vs.map(v =>
+    `<option value="${esc(v.code)}" ${v.code === last ? 'selected' : ''}>${esc(v.code)} – ${esc(v.spz)}</option>`).join('');
+}
+function vehOf(code){ return ((V.data && V.data.vehicles) || []).find(v => v.code === code); }
+function kmHint(p){
+  const v = vehOf($(p + 'Veh').value), el = $(p + 'KmHint');
+  if(!v || !v.lastKm){ el.textContent = ''; el.className = 'kmhint'; return; }
+  const km = Number($(p + 'Km').value) || 0;
+  if(km && km < v.lastKm){ el.className = 'kmhint w'; el.textContent = `Pozor: méně než poslední známý stav ${fmtKm(v.lastKm)} km.`; }
+  else if(km && km - v.lastKm > 3000){ el.className = 'kmhint w'; el.textContent = `Pozor: o ${fmtKm(km - v.lastKm)} km víc než poslední známý stav – zkontrolujte číslo.`; }
+  else { el.className = 'kmhint'; el.textContent = `Poslední známý stav: ${fmtKm(v.lastKm)} km`; }
+}
+/* fotky – mobil je před odesláním zmenší (max 1600 px, JPEG) */
+function shrink(file){
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file); const img = new Image();
+    img.onload = () => {
+      const max = 1600; let w = img.naturalWidth, h = img.naturalHeight;
+      const k = Math.min(1, max / Math.max(w, h)); w = Math.round(w * k); h = Math.round(h * k);
+      const c = document.createElement('canvas'); c.width = w; c.height = h;
+      c.getContext('2d').drawImage(img, 0, 0, w, h); URL.revokeObjectURL(url);
+      res(c.toDataURL('image/jpeg', 0.78));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej('Fotku se nepodařilo načíst – zkuste ji vyfotit znovu.'); };
+    img.src = url;
+  });
+}
+function renderPhotos(key, boxId, max){
+  const arr = V[key];
+  let h = arr.map((d, i) => `<div class="ph"><img src="${d}" alt=""><button class="x" onclick="delPhoto('${key}','${boxId}',${max},${i})">✕</button></div>`).join('');
+  if(arr.length < max) h += `<label class="ph"><span class="pi">📷</span>Přidat fotku<input type="file" accept="image/*" onchange="addPhoto(this,'${key}','${boxId}',${max})"></label>`;
+  $(boxId).innerHTML = h;
+}
+async function addPhoto(inp, key, boxId, max){
+  const f = inp.files && inp.files[0]; if(!f) return;
+  busy(true, 'Zpracovávám fotku…');
+  try{ const d = await shrink(f); if(V[key].length < max) V[key].push(d); }
+  catch(e){ msg(key === 'cPhotos' ? 'checkMsg' : 'fuelMsg', 'err', e); }
+  finally{ busy(false); renderPhotos(key, boxId, max); }
+}
+function delPhoto(key, boxId, max, i){ V[key].splice(i, 1); renderPhotos(key, boxId, max); }
+
+/* ---------- kontrola vozidla ---------- */
+function resetCheck(){
+  vehOptions('cVeh'); $('cKm').value = ''; $('cDesc').value = ''; $('cConfirm').checked = false;
+  $('cConfirmText').textContent = V.data.confirm;
+  V.defects = {}; V.ok = ''; V.cPhotos = [];
+  renderGroups(); renderPhotos('cPhotos', 'cPhotos', 2); setOk(''); kmHint('c');
+}
+function renderGroups(){
+  $('cGroups').innerHTML = V.data.groups.map((g, gi) => {
+    const n = g.items.filter((it, ii) => V.defects[gi + ':' + ii]).length;
+    return `<div class="grp"><div class="gh">${esc(g.g)}${n ? `<span class="bad">${n} ${n === 1 ? 'závada' : (n < 5 ? 'závady' : 'závad')}</span>` : '<span class="okc">v pořádku</span>'}</div>
+      <div class="opts">${g.items.map((it, ii) => `<button type="button" class="opt ${V.defects[gi + ':' + ii] ? 'on' : ''}" onclick="togDef(${gi},${ii})">${esc(it)}</button>`).join('')}</div></div>`;
+  }).join('');
+  const any = Object.keys(V.defects).length > 0;
+  $('cDefBox').classList.toggle('hidden', !any && V.ok !== 'NE');
+}
+function togDef(gi, ii){
+  const k = gi + ':' + ii;
+  if(V.defects[k]) delete V.defects[k]; else V.defects[k] = 1;
+  renderGroups();
+}
+function setOk(v){
+  V.ok = v;
+  $('cOkY').classList.toggle('on', v === 'ANO'); $('cOkN').classList.toggle('on', v === 'NE');
+  $('cOkWarn').classList.toggle('hidden', v !== 'NE');
+  $('cDefBox').classList.toggle('hidden', !Object.keys(V.defects).length && v !== 'NE');
+}
+async function sendCheck(){
+  const vehicle = $('cVeh').value, km = $('cKm').value.trim();
+  const defects = Object.keys(V.defects).map(k => { const [gi, ii] = k.split(':').map(Number); return V.data.groups[gi].g + ': ' + V.data.groups[gi].items[ii]; });
+  const desc = $('cDesc').value.trim();
+  if(!vehicle) return msg('checkMsg', 'err', 'Vyberte vozidlo.');
+  if(!km) return msg('checkMsg', 'err', 'Zadejte stav tachometru (km).');
+  if(!V.ok) return msg('checkMsg', 'err', 'Vyberte, zda je vozidlo technicky způsobilé k provozu (ANO / NE).');
+  if((defects.length || V.ok === 'NE') && desc.length < 3) return msg('checkMsg', 'err', 'Popište prosím zjištěnou závadu.');
+  if(!$('cConfirm').checked) return msg('checkMsg', 'err', 'Potvrďte provedení kontroly (zaškrtávací políčko dole).');
+  $('cSend').disabled = true; busy(true, V.cPhotos.length ? 'Odesílám kontrolu a fotky…' : 'Odesílám kontrolu…');
+  try{
+    V.data = await call('mVehCheck', { token:S.token, uid:uid(), vehicle, km, defects, desc, ok:V.ok, confirm:true,
+      photos: V.cPhotos.map(d => ({ b64:d })) });
+    store.set('m_veh', vehicle);
+    msg('checkMsg', 'ok', defects.length ? `Kontrola ${vehicle} odeslána – ${defects.length} ${defects.length === 1 ? 'závada' : (defects.length < 5 ? 'závady' : 'závad')} nahlášeno garážmistrovi.` : `Kontrola ${vehicle} odeslána – vše bez závad. Šťastnou cestu!`);
+    resetCheck(); renderVehList();
+  }catch(e){
+    if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); } else msg('checkMsg', 'err', e);
+  }finally{ $('cSend').disabled = false; busy(false); window.scrollTo({ top:0, behavior:'smooth' }); }
+}
+
+/* ---------- tankování ---------- */
+function resetFuel(){
+  vehOptions('tVeh');
+  const d = $('tDate'); d.max = V.data.today; d.min = isoShift(V.data.today, -V.data.daysBack); d.value = V.data.today;
+  $('tKm').value = ''; $('tL').value = ''; $('tNote').value = '';
+  const lp = store.get('m_pay');
+  $('tPay').innerHTML = V.data.pays.map(p => `<option ${p === (lp || V.data.pays[0]) ? 'selected' : ''}>${esc(p)}</option>`).join('');
+  V.tPhotos = []; renderPhotos('tPhotos', 'tPhotos', 1); kmHint('t'); payHint();
+}
+/* V3.1: fotka účtenky je povinná jen při platbě hotově – jinak stačí odevzdat účtenku na dispečink */
+function isCash(){ return /hotov/i.test($('tPay').value || ''); }
+function payHint(){
+  const cash = isCash();
+  $('tPhLabel').textContent = cash ? 'Fotka účtenky (povinná při platbě hotově)' : 'Fotka účtenky (nepovinné)';
+  $('tPhHint').textContent = cash ? 'Vyfoťte účtenku hned u pumpy. Papírovou účtenku i tak odevzdejte na dispečink.' : 'Stačí odevzdat papírovou účtenku na dispečink.';
+}
+async function sendFuel(){
+  const vehicle = $('tVeh').value, date = $('tDate').value, km = $('tKm').value.trim(), liters = $('tL').value.trim(), pay = $('tPay').value;
+  if(!vehicle) return msg('fuelMsg', 'err', 'Vyberte vozidlo.');
+  if(!date) return msg('fuelMsg', 'err', 'Vyberte datum tankování.');
+  if(!km) return msg('fuelMsg', 'err', 'Zadejte stav tachometru (km).');
+  if(!(Number(liters.replace(',', '.')) > 0)) return msg('fuelMsg', 'err', 'Zadejte natankované litry (např. 72,5).');
+  if(isCash() && !V.tPhotos.length) return msg('fuelMsg', 'err', 'Při platbě hotově vyfoťte prosím účtenku.');
+  $('tSend').disabled = true; busy(true, V.tPhotos.length ? 'Odesílám tankování a účtenku…' : 'Odesílám tankování…');
+  try{
+    V.data = await call('mVehFuel', { token:S.token, uid:uid(), vehicle, date, km, liters, pay, note:$('tNote').value,
+      photo: V.tPhotos[0] ? { b64:V.tPhotos[0] } : null });
+    store.set('m_veh', vehicle); store.set('m_pay', pay);
+    msg('fuelMsg', 'ok', `Tankování ${vehicle} odesláno – ${liters.replace('.', ',')} l, ${fmtKm(Number(km))} km. Čeká na zápis dispečinkem.`);
+    resetFuel(); renderVehList();
+  }catch(e){
+    if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); } else msg('fuelMsg', 'err', e);
+  }finally{ $('tSend').disabled = false; busy(false); window.scrollTo({ top:0, behavior:'smooth' }); }
+}
+async function delFuel(id){
+  if(!(await ask('Smazat toto tankování?', 'Smazat'))) return;
+  busy(true, 'Mažu…');
+  try{ V.data = await call('mVehDelete', { token:S.token, id }); renderVehList(); }
+  catch(e){ msg('fuelMsg', 'err', e); }
+  finally{ busy(false); }
+}
+function renderVehList(){
+  const kind = S.view === 'check' ? 'check' : 'fuel';
+  $('vehListTitle').textContent = kind === 'check' ? 'Moje kontroly' : 'Moje tankování';
+  const items = ((V.data && V.data.mine) || []).filter(x => x.kind === kind);
+  if(!items.length){ $('vehList').innerHTML = '<div class="empty">Za poslední měsíc zatím nic.</div>'; return; }
+  $('vehList').innerHTML = items.map(x => {
+    if(kind === 'check'){
+      const chip = x.state === 'Bez závad' ? '<span class="chip ok">Bez závad</span>'
+        : (x.state === 'Vyřešeno' ? '<span class="chip ok">Vyřešeno</span>' : `<span class="chip ${x.ok === 'NE' ? 'no' : 'wait'}">${esc(x.state || 'Nová závada')}</span>`);
+      return `<div class="item"><div class="h"><span class="d">${esc(x.vehicle)} · ${fmtKm(x.km)} km</span>${chip}</div>
+        <div class="n">${x.defects ? x.defects + ' ' + (x.defects === 1 ? 'závada' : (x.defects < 5 ? 'závady' : 'závad')) + (x.ok === 'NE' ? ' · nezpůsobilé k provozu' : '') + ' · ' : ''}odesláno ${esc(x.sent)}</div></div>`;
+    }
+    const chip = x.state === 'Zapsáno' ? '<span class="chip ok">Zapsáno do karty</span>'
+      : (x.state === 'Zamítnuto' ? '<span class="chip no">Zamítnuto</span>' : '<span class="chip wait">Čeká na dispečink</span>');
+    return `<div class="item"><div class="h"><span class="d">${esc(x.vehicle)} · ${esc(dayLabel(x.date))}</span>${chip}</div>
+      <div class="t">${String(x.liters).replace('.', ',')} l · ${fmtKm(x.km)} km · ${esc(x.pay)}</div>
+      <div class="n">${x.receipt ? '📷 fotka účtenky · ' : ''}odesláno ${esc(x.sent)}</div>
+      ${x.state === 'Zamítnuto' && x.reason ? `<div class="reason">Důvod: ${esc(x.reason)}</div>` : ''}
+      ${x.state === 'Ke schválení' ? `<div class="acts"><button class="del" onclick="delFuel('${esc(x.id)}')">Smazat</button></div>` : ''}</div>`;
   }).join('');
 }
 
