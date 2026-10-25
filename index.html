@@ -7,12 +7,12 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Docházka">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ -->
+<meta name="apple-mobile-web-app-title" content="Dopravaplus">
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Docházka Dopravaplus</title>
+<title>Dopravaplus</title>
 <style>
 :root{--blue:#1769e0;--blue2:#1257c0;--bg:#f2f4f7;--card:#fff;--text:#101828;--muted:#667085;--line:#e4e7ec;--green:#067647;--greenBg:#ecfdf3;--amber:#b54708;--amberBg:#fffaeb;--red:#b42318;--redBg:#fef3f2}
 *{box-sizing:border-box}
@@ -107,7 +107,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
 
 <div class="top">
   <div class="row">
-    <div class="brand"><img class="logo" src="icon-192.png" alt=""><div><h1 id="topTitle">Docházka</h1><div class="sub" id="topSub">Dopravaplus – řidiči a závozníci</div></div></div>
+    <div class="brand"><img class="logo" src="icon-192.png" alt=""><div><h1 id="topTitle">Dopravaplus</h1><div class="sub" id="topSub">řidiči a závozníci</div></div></div>
     <button id="backBtn" class="hidden" onclick="goHome()">‹ Zpět</button><button id="logoutBtn" class="hidden" onclick="logout()">Odhlásit</button>
   </div>
 </div>
@@ -269,8 +269,8 @@ async function init(){
 async function showLogin(){
   $('loginCard').classList.remove('hidden');
   VIEWS_ALL.concat(['logoutBtn','backBtn']).forEach(id => $(id).classList.add('hidden'));
-  $('topTitle').textContent = 'Docházka';
-  $('topSub').textContent = 'Dopravaplus – řidiči a závozníci';
+  $('topTitle').textContent = 'Dopravaplus';
+  $('topSub').textContent = 'řidiči a závozníci';
   try{
     const names = await call('mNames');
     const last = store.get('m_name');
