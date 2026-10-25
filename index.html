@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn · V3.23 vycentrované texty -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -171,10 +171,10 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
         <div class="f" style="margin-bottom:0"><label for="cKm">Stav tachometru (km)</label><input id="cKm" type="number" inputmode="numeric" placeholder="např. 558600" oninput="kmHint('c');ready()"><div class="kmhint" id="cKmHint"></div></div>
       </div>
     </div>
-    <div class="infobox"><b>Označte jen to, co není v pořádku.</b></div>
+    <div class="infobox" style="text-align:center"><b>Označte jen to, co není v pořádku.</b></div>
     <div id="cGroups"></div>
     <!-- V3.19: závěr kontroly ve dvou oddílech se stejným vzhledem jako skupiny -->
-    <div id="cDefBox" class="grp sec"><div class="gh">Popis a fotografie</div><div class="gs mut" id="cDefSub">nepovinné – pomůže garážmistrovi</div>
+    <div id="cDefBox" class="grp sec"><div class="gh">Popis a fotografie</div><div class="gs mut" id="cDefSub">nepovinné</div>
       <div class="secbox">
         <div class="f"><label for="cDesc" id="cDescLabel">Doplňující popis</label><textarea id="cDesc" maxlength="1500" placeholder="cokoli dalšího pro garážmistra" oninput="ready()"></textarea></div>
         <div class="f" style="margin-bottom:0"><label>Fotografie (max. 2 – detail a celek)</label><div class="photos" id="cPhotos"></div></div>
@@ -182,7 +182,7 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
     </div>
     <div class="grp sec"><div class="gh">Závěr kontroly</div><div class="gs mut">povinné</div>
       <div class="secbox">
-        <div class="f"><label>Je vozidlo technicky způsobilé k provozu?</label>
+        <div class="f"><label style="text-align:center">Je vozidlo technicky způsobilé k provozu?</label>
           <div class="yn" id="cYN"><button type="button" id="cOkY" class="y" onclick="setOk('ANO')">ANO</button><button type="button" id="cOkN" class="n" onclick="setOk('NE')">NE</button></div>
           <div id="cOkWarn" class="warnbox hidden">Jízda je zakázána. Neprodleně kontaktujte dispečera nebo odpovědnou osobu.</div>
         </div>
@@ -254,7 +254,7 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 <script>
 /* V3.14: automatická aktualizace – ikona na ploše (hlavně iPhone) drží starou stránku v mezipaměti.
    Po otevření se stránka zeptá GitHubu na aktuální verzi; když je novější, sama se načte znovu. */
-const APP_VER = '3.22';
+const APP_VER = '3.23';
 async function checkUpdate(){
   try{
     const r = await fetch('./?nocache=' + Date.now(), { cache:'no-store' });
@@ -613,7 +613,7 @@ function defBox(){
   // V3.20: oddíl Popis a fotografie je vidět vždy (fotka jde přidat i bez závady)
   const need = V.ok === 'NE' && !any;
   $('cDescLabel').textContent = need ? 'Proč vozidlo není způsobilé k provozu (povinné)' : 'Doplňující popis';
-  $('cDefSub').textContent = need ? 'popis je povinný' : 'nepovinné – pomůže garážmistrovi';
+  $('cDefSub').textContent = need ? 'popis je povinný' : 'nepovinné';
   ready();
 }
 /* V3.6: stav skupiny pod názvem – podle druhu (závada / chybí / nízký stav) */
