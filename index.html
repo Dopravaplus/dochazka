@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn · V3.23 vycentrované texty · V3.24 oddíl Základní údaje -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn · V3.23 vycentrované texty · V3.24 oddíl Základní údaje · V3.25 fotky u každé závady -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -120,6 +120,8 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 .yn button.on.n{background:var(--redBg);border-color:#fda29b;color:var(--red)}
 .warnbox{background:var(--redBg);color:var(--red);border-radius:12px;padding:11px 13px;font-weight:700;font-size:14px;margin-top:10px}
 .photos{display:flex;gap:10px;flex-wrap:wrap}
+.dph{display:flex;gap:8px;margin-top:8px}
+.dph .ph{width:72px;height:72px;border-color:#fda29b;background:#fff;color:var(--red);font-size:11px}
 .ph{width:96px;height:96px;border-radius:12px;border:1.5px dashed #b2bccc;background:#f9fafb;display:flex;align-items:center;justify-content:center;flex-direction:column;font-size:12px;color:var(--muted);font-weight:700;position:relative;overflow:hidden}
 .ph img{width:100%;height:100%;object-fit:cover}
 .ph .x{position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;background:rgba(16,24,40,.65);color:#fff;border:0;font-size:15px;line-height:26px;padding:0}
@@ -177,7 +179,7 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
     <div id="cDefBox" class="grp sec"><div class="gh">Popis a fotografie</div><div class="gs mut" id="cDefSub">nepovinné</div>
       <div class="secbox">
         <div class="f"><label for="cDesc" id="cDescLabel">Doplňující popis</label><textarea id="cDesc" maxlength="1500" placeholder="cokoli dalšího pro garážmistra" oninput="ready()"></textarea></div>
-        <div class="f" style="margin-bottom:0"><label>Fotografie (max. 2 – detail a celek)</label><div class="photos" id="cPhotos"></div></div>
+        <div class="f" style="margin-bottom:0"><label>Další fotografie (max. 4)</label><div class="photos" id="cPhotos"></div></div>
       </div>
     </div>
     <div class="grp sec"><div class="gh">Závěr kontroly</div><div class="gs mut">povinné</div>
@@ -254,7 +256,7 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 <script>
 /* V3.14: automatická aktualizace – ikona na ploše (hlavně iPhone) drží starou stránku v mezipaměti.
    Po otevření se stránka zeptá GitHubu na aktuální verzi; když je novější, sama se načte znovu. */
-const APP_VER = '3.24';
+const APP_VER = '3.25';
 async function checkUpdate(){
   try{
     const r = await fetch('./?nocache=' + Date.now(), { cache:'no-store' });
@@ -266,7 +268,7 @@ async function checkUpdate(){
 checkUpdate();
 document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible') checkUpdate(); });
 const S = { token:'', name:'', today:'', daysBack:31, editing:null, entries:[], view:'' };
-const V = { data:null, defects:{}, notes:{}, open:{}, exp:{}, ok:'', cPhotos:[], tPhotos:[] };
+const V = { data:null, defects:{}, notes:{}, open:{}, exp:{}, dPhotos:{}, ok:'', cPhotos:[], tPhotos:[] };
 const store = {
   get(k){ try{ return localStorage.getItem(k) || ''; }catch(e){ return ''; } },
   set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} },
@@ -523,20 +525,25 @@ function delPhoto(key, boxId, max, i){ V[key].splice(i, 1); renderPhotos(key, bo
 function resetCheck(){
   vehOptions('cVeh'); $('cKm').value = ''; $('cDesc').value = ''; $('cConfirm').checked = false;
   $('cConfirmText').textContent = V.data.confirm;
-  V.defects = {}; V.notes = {}; V.open = {}; V.exp = {}; TRIED.check = false; clearErrs('checkCard'); V.ok = ''; V.cPhotos = [];
-  renderGroups(); renderPhotos('cPhotos', 'cPhotos', 2); setOk(''); kmHint('c');
+  V.defects = {}; V.notes = {}; V.open = {}; V.exp = {}; V.dPhotos = {}; TRIED.check = false; clearErrs('checkCard'); V.ok = ''; V.cPhotos = [];
+  renderGroups(); renderPhotos('cPhotos', 'cPhotos', 4); setOk(''); kmHint('c');
 }
 function renderGroups(){
+  V.rendering = true;
+  try{ renderGroups_(); } finally { V.rendering = false; }
+  defBox();
+}
+function renderGroups_(){
   $('cGroups').innerHTML = V.data.groups.map((g, gi) => {
     const n = g.items.filter((it, ii) => V.defects[gi + ':' + ii]).length;
     return `<div class="grp ${n ? 'has' : ''}"><div class="gh">${esc(g.g)}</div><div class="gs ${n ? 'bad' : 'okc'}">${esc(grpState(g, n))}</div>
       <div class="opts">${g.items.map((it, ii) => {
         const k = gi + ':' + ii, on = V.defects[k], ms = marksOf(g), open = on && isOpen(gi, ii), note = String(V.notes[k] || '').trim();
-        const sub = on && !open && note ? `<span class="on-note">${esc(note)}</span>` : (g.hints && g.hints[ii] ? `<span class="oh">${esc(g.hints[ii])}</span>` : '');
+        const np = (V.dPhotos[k] || []).length;
+        const sub = on && !open && (note || np) ? `<span class="on-note">${esc(note)}${np ? (note ? ' · ' : '') + np + (np === 1 ? ' fotka' : ' fotky') : ''}</span>` : (g.hints && g.hints[ii] ? `<span class="oh">${esc(g.hints[ii])}</span>` : '');
         return `<button type="button" class="opt ${on ? 'on' : ''}" onclick="togDef(${gi},${ii})"><span class="ot">${esc(it)}${sub}</span>${on ? `<span class="os">${on === '?' ? 'vyberte' : esc(on)}</span>` : '<span class="os ok" aria-label="v pořádku"></span>'}</button>`
-        + (open ? `<div class="onote">${ms.length > 1 ? `<div class="mk" id="mk_${gi}_${ii}">${ms.map(m => `<button type="button" class="${on === m ? 'on' : ''}" onclick="setMark(${gi},${ii},'${esc(m)}')">${esc(m)}</button>`).join('')}</div>` : ''}${noteBox(gi, ii, on)}<button type="button" class="rm" onclick="removeDef(${gi},${ii})">Zrušit označení</button></div>` : ''); }).join('')}</div></div>`;
+        + (open ? `<div class="onote">${ms.length > 1 ? `<div class="mk" id="mk_${gi}_${ii}">${ms.map(m => `<button type="button" class="${on === m ? 'on' : ''}" onclick="setMark(${gi},${ii},'${esc(m)}')">${esc(m)}</button>`).join('')}</div>` : ''}${noteBox(gi, ii, on)}${needNote(on) ? defPhotos(gi, ii) : ''}<button type="button" class="rm" onclick="removeDef(${gi},${ii})">Zrušit označení</button></div>` : ''); }).join('')}</div></div>`;
   }).join('');
-  defBox();
 }
 /* V3.7: společné pole a fotky – vidět jen při závadě nebo NE; při NE bez označené položky je popis povinný */
 /* V3.12: kontrola vyplnění – chyby se ukážou přímo u políček; tlačítko je světlé, dokud něco chybí */
@@ -655,6 +662,8 @@ function isOpen(gi, ii){ return !isDone(gi, ii) || !!V.exp[gi + ':' + ii]; }
 function focusNote(gi, ii){ const ta = $('dn_' + gi + '_' + ii); if(ta) ta.focus({ preventScroll:true }); }
 function togDef(gi, ii){
   const k = gi + ':' + ii, g = V.data.groups[gi];
+  V.picking = '';
+  Object.keys(V.exp).forEach(x => { if(x !== k){ const [a, b] = x.split(':').map(Number); if(isDone(a, b)) delete V.exp[x]; } });   // ostatní hotové sbalit
   if(!V.defects[k]){                                   // nové označení
     V.defects[k] = marksOf(g).length > 1 ? '?' : marksOf(g)[0];
     delete V.exp[k]; renderGroups();
@@ -665,7 +674,23 @@ function togDef(gi, ii){
   if(isOpen(gi, ii)){ if(isDone(gi, ii)){ delete V.exp[k]; renderGroups(); } else focusNote(gi, ii); }
   else { V.exp[k] = 1; renderGroups(); focusNote(gi, ii); }
 }
-function removeDef(gi, ii){ const k = gi + ':' + ii; delete V.defects[k]; delete V.notes[k]; delete V.exp[k]; renderGroups(); }
+function removeDef(gi, ii){ const k = gi + ':' + ii; delete V.defects[k]; delete V.notes[k]; delete V.exp[k]; delete V.dPhotos[k]; renderGroups(); }
+/* V3.25: fotky přímo u závady (max. 2 na položku) */
+function defPhotos(gi, ii){
+  const k = gi + ':' + ii, arr = V.dPhotos[k] || [];
+  let h = arr.map((d, i) => `<div class="ph"><img src="${d}" alt=""><button class="x" onclick="delDefPhoto('${k}',${i})">✕</button></div>`).join('');
+  if(arr.length < 2) h += `<label class="ph" onpointerdown="V.picking='${k}'"><span class="pi"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#b42318" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></svg></span>Fotka<input type="file" accept="image/*" onchange="addDefPhoto(this,'${k}')"></label>`;
+  return `<div class="dph">${h}</div>`;
+}
+async function addDefPhoto(inp, k){
+  const f = inp.files && inp.files[0]; if(!f) return;
+  busy(true, 'Zpracovávám fotku…');
+  V.picking = '';
+  try{ const d = await shrink(f); V.dPhotos[k] = V.dPhotos[k] || []; if(V.dPhotos[k].length < 2) V.dPhotos[k].push(d); V.exp[k] = 1; }
+  catch(e){ msg('checkMsg', 'err', e); }
+  finally{ busy(false); renderGroups(); }
+}
+function delDefPhoto(k, i){ (V.dPhotos[k] || []).splice(i, 1); V.exp[k] = 1; renderGroups(); }
 function setMark(gi, ii, m){
   const k = gi + ':' + ii; V.defects[k] = m;
   if(!needNote(m)) delete V.exp[k];                    // „chybí“ – hotovo, sbalí se
@@ -673,9 +698,11 @@ function setMark(gi, ii, m){
   if(needNote(m)) focusNote(gi, ii);
 }
 function noteDone(gi, ii){                            // po dopsání popisu (opuštění pole) se položka sbalí
+  if(V.rendering) return;                             // pole zmizelo jen kvůli překreslení
   setTimeout(() => {
     const ta = $('dn_' + gi + '_' + ii);
     if(ta && document.activeElement === ta) return;
+    if(V.picking === gi + ':' + ii) return;          // právě vybírá fotku – nesbalovat
     if(isDone(gi, ii)){ delete V.exp[gi + ':' + ii]; renderGroups(); }
   }, 220);
 }
@@ -703,10 +730,11 @@ async function sendCheck(){
     TRIED.check = true; showErrs('checkCard', errs); goFirstErr(errs);
     return;
   }
-  $('cSend').disabled = true; busy(true, V.cPhotos.length ? 'Odesílám kontrolu a fotky…' : 'Odesílám kontrolu…');
+  $('cSend').disabled = true; busy(true, (V.cPhotos.length || Object.values(V.dPhotos).some(a => a.length)) ? 'Odesílám kontrolu a fotky…' : 'Odesílám kontrolu…');
   try{
     V.data = await call('mVehCheck', { token:S.token, uid:uid(), vehicle, km, defects, notes, desc, ok:V.ok, confirm:true,
-      photos: V.cPhotos.map(d => ({ b64:d })) });
+      photos: V.cPhotos.map(d => ({ b64:d })),
+      defPhotos: keys.flatMap(k => { const [gi, ii] = k.split(':').map(Number), g = V.data.groups[gi]; return (V.dPhotos[k] || []).map(d => ({ label: defLabel(g, g.items[ii], V.defects[k]), b64:d })); }) });
     store.set('m_veh', vehicle);
     msg('checkMsg', 'ok', defects.length ? `Kontrola ${vehicle} odeslána – ${defects.length} ${defects.length === 1 ? 'položka nahlášena' : (defects.length < 5 ? 'položky nahlášeny' : 'položek nahlášeno')} garážmistrovi.` : `Kontrola ${vehicle} odeslána – vše bez závad. Šťastnou cestu!`);
     resetCheck(); renderVehList();
