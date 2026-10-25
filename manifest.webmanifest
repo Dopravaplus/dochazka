@@ -1,7 +1,7 @@
 {
-  "name": "Docházka Dopravaplus",
-  "short_name": "Docházka",
-  "description": "Docházka řidičů a závozníků Dopravaplus",
+  "name": "Dopravaplus",
+  "short_name": "Dopravaplus",
+  "description": "Docházka řidičů a závozníků",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
