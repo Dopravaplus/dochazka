@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -77,7 +77,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
 .grp .gh{font-weight:900;font-size:17px;color:var(--text);border-left:4px solid var(--blue);padding:1px 0 1px 10px}
 .grp .gs{font-size:13px;font-weight:700;margin:3px 0 9px;padding-left:14px}
 .grp.has .gh{border-left-color:var(--red)}
-.gs.okc{color:var(--green)}.gs.bad{color:var(--red)}
+.gs.okc{color:var(--green)}
+.onote{background:var(--redBg);padding:0 12px 12px}
+.mk{display:flex;gap:8px;margin-bottom:8px}
+.mk button{flex:1;border:1px solid #fda29b;background:#fff;color:var(--red);border-radius:10px;padding:8px;font-size:14px;font-weight:800;font-family:inherit}
+.mk button.on{background:var(--red);color:#fff;border-color:var(--red)}
+.onote textarea{min-height:56px;font-size:15px;padding:10px;border-color:#fda29b}
+.onote textarea.miss{border-color:var(--red);box-shadow:0 0 0 3px rgba(217,45,32,.15)}.gs.bad{color:var(--red)}
 /* V3.2: položky kontroly pod sebou – řádek = položka, vpravo stav */
 .opts{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .opt{display:flex;align-items:center;gap:10px;width:100%;border:0;border-top:1px solid var(--line);background:#fff;padding:12px 12px;font-size:15px;font-weight:600;color:#344054;font-family:inherit;text-align:left;line-height:1.3}
@@ -144,7 +150,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
     <div class="hint" style="margin:0 0 10px">Označte <b>jen závady</b>. Co neoznačíte, je v pořádku.</div>
     <div id="cGroups"></div>
     <div id="cDefBox" class="hidden" style="margin-top:14px">
-      <div class="f"><label for="cDesc">Popis závady</label><textarea id="cDesc" maxlength="1500" placeholder="Co je poškozené, kde se závada nachází a jak se projevuje"></textarea></div>
+      <div class="f"><label for="cDesc" id="cDescLabel">Doplňující popis (nepovinné)</label><textarea id="cDesc" maxlength="1500" placeholder="cokoli dalšího pro garážmistra"></textarea></div>
       <div class="f"><label>Fotografie závady (max. 2 – detail + celek)</label><div class="photos" id="cPhotos"></div></div>
     </div>
     <div class="f" style="margin-top:12px"><label>Vozidlo je technicky způsobilé k provozu</label>
@@ -214,7 +220,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
 
 <script>
 const S = { token:'', name:'', today:'', daysBack:31, editing:null, entries:[], view:'' };
-const V = { data:null, defects:{}, ok:'', cPhotos:[], tPhotos:[] };
+const V = { data:null, defects:{}, notes:{}, ok:'', cPhotos:[], tPhotos:[] };
 const store = {
   get(k){ try{ return localStorage.getItem(k) || ''; }catch(e){ return ''; } },
   set(k, v){ try{ localStorage.setItem(k, v); }catch(e){} },
@@ -469,52 +475,85 @@ function delPhoto(key, boxId, max, i){ V[key].splice(i, 1); renderPhotos(key, bo
 function resetCheck(){
   vehOptions('cVeh'); $('cKm').value = ''; $('cDesc').value = ''; $('cConfirm').checked = false;
   $('cConfirmText').textContent = V.data.confirm;
-  V.defects = {}; V.ok = ''; V.cPhotos = [];
+  V.defects = {}; V.notes = {}; V.ok = ''; V.cPhotos = [];
   renderGroups(); renderPhotos('cPhotos', 'cPhotos', 2); setOk(''); kmHint('c');
 }
 function renderGroups(){
   $('cGroups').innerHTML = V.data.groups.map((g, gi) => {
     const n = g.items.filter((it, ii) => V.defects[gi + ':' + ii]).length;
     return `<div class="grp ${n ? 'has' : ''}"><div class="gh">${esc(g.g)}</div><div class="gs ${n ? 'bad' : 'okc'}">${esc(grpState(g, n))}</div>
-      <div class="opts">${g.items.map((it, ii) => { const on = V.defects[gi + ':' + ii]; return `<button type="button" class="opt ${on ? 'on' : ''}" onclick="togDef(${gi},${ii})"><span class="ot">${esc(it)}${g.hints && g.hints[ii] ? `<span class="oh">${esc(g.hints[ii])}</span>` : ''}</span><span class="os">${on ? '✕ ' + esc(g.mark || 'závada') : 'v pořádku'}</span></button>`; }).join('')}</div></div>`;
+      <div class="opts">${g.items.map((it, ii) => { const k = gi + ':' + ii, on = V.defects[k], ms = marksOf(g); return `<button type="button" class="opt ${on ? 'on' : ''}" onclick="togDef(${gi},${ii})"><span class="ot">${esc(it)}${g.hints && g.hints[ii] ? `<span class="oh">${esc(g.hints[ii])}</span>` : ''}</span><span class="os">${on ? '✕ ' + esc(on) : 'v pořádku'}</span></button>`
+        + (on ? `<div class="onote">${ms.length > 1 ? `<div class="mk">${ms.map(m => `<button type="button" class="${on === m ? 'on' : ''}" onclick="setMark(${gi},${ii},'${esc(m)}')">${esc(m)}</button>`).join('')}</div>` : ''}<textarea id="dn_${gi}_${ii}" maxlength="400" placeholder="${needNote(on) ? 'Popište ' + (on === 'poškozeno' ? 'poškození' : 'závadu') + ' – co, kde, jak se projevuje (povinné)' : 'Poznámka (nepovinné)'}" oninput="V.notes['${k}']=this.value;this.classList.remove('miss')">${esc(V.notes[k] || '')}</textarea></div>` : ''); }).join('')}</div></div>`;
   }).join('');
+  defBox();
+}
+/* V3.7: společné pole a fotky – vidět jen při závadě nebo NE; při NE bez označené položky je popis povinný */
+function defBox(){
   const any = Object.keys(V.defects).length > 0;
   $('cDefBox').classList.toggle('hidden', !any && V.ok !== 'NE');
+  const need = V.ok === 'NE' && !any;
+  $('cDescLabel').textContent = need ? 'Proč vozidlo není způsobilé k provozu (povinné)' : 'Doplňující popis (nepovinné)';
 }
 /* V3.6: stav skupiny pod názvem – podle druhu (závada / chybí / nízký stav) */
+/* V3.8: druhy označení skupiny (výbava: chybí / poškozeno), popis povinný u „závada“ a „poškozeno“ */
+function marksOf(g){ return g.marks && g.marks.length ? g.marks : [g.mark || 'závada']; }
+function needNote(m){ return m === 'závada' || m === 'poškozeno'; }
+function defLabel(g, item, m){ return g.g + ': ' + item + (m === 'závada' ? '' : ' – ' + m); }
 function grpState(g, n){
   if(!n) return '✓ vše v pořádku';
-  const pol = n === 1 ? 'položka' : (n < 5 ? 'položky' : 'položek'), pol2 = n === 1 ? 'položky' : 'položek';
-  if(g.mark === 'chybí') return `✕ chybí ${n} ${pol}`;
-  if(g.mark === 'nízký stav') return `✕ nízký stav u ${n} ${pol2}`;
-  return `✕ ${n} ${n === 1 ? 'závada' : (n < 5 ? 'závady' : 'závad')}`;
+  const gi = V.data.groups.indexOf(g), cnt = {};
+  g.items.forEach((it, ii) => { const m = V.defects[gi + ':' + ii]; if(m) cnt[m] = (cnt[m] || 0) + 1; });
+  const pol = c => c === 1 ? 'položka' : (c < 5 ? 'položky' : 'položek'), pol2 = c => c === 1 ? 'položky' : 'položek';
+  return '✕ ' + Object.keys(cnt).map(m => {
+    const c = cnt[m];
+    if(m === 'chybí') return `chybí ${c} ${pol(c)}`;
+    if(m === 'poškozeno') return `poškozeno: ${c} ${pol(c)}`;
+    if(m === 'nízký stav') return `nízký stav u ${c} ${pol2(c)}`;
+    return `${c} ${c === 1 ? 'závada' : (c < 5 ? 'závady' : 'závad')}`;
+  }).join(' · ');
 }
 function togDef(gi, ii){
-  const k = gi + ':' + ii;
-  if(V.defects[k]) delete V.defects[k]; else V.defects[k] = 1;
-  renderGroups();
+  const k = gi + ':' + ii, g = V.data.groups[gi];
+  if(V.defects[k]){ delete V.defects[k]; delete V.notes[k]; renderGroups(); return; }
+  V.defects[k] = marksOf(g)[0]; renderGroups();
+  const ta = $('dn_' + gi + '_' + ii);
+  if(ta && needNote(V.defects[k])) ta.focus({ preventScroll:true });
+}
+function setMark(gi, ii, m){
+  V.defects[gi + ':' + ii] = m; renderGroups();
+  const ta = $('dn_' + gi + '_' + ii); if(ta && needNote(m)) ta.focus({ preventScroll:true });
 }
 function setOk(v){
   V.ok = v;
   $('cOkY').classList.toggle('on', v === 'ANO'); $('cOkN').classList.toggle('on', v === 'NE');
   $('cOkWarn').classList.toggle('hidden', v !== 'NE');
-  $('cDefBox').classList.toggle('hidden', !Object.keys(V.defects).length && v !== 'NE');
+  defBox();
 }
 async function sendCheck(){
   const vehicle = $('cVeh').value, km = $('cKm').value.trim();
-  const defects = Object.keys(V.defects).map(k => { const [gi, ii] = k.split(':').map(Number); const g = V.data.groups[gi]; return g.g + ': ' + g.items[ii] + (g.mark ? ' – ' + g.mark : ''); });
+  const keys = Object.keys(V.defects).sort((a, b) => { const x = a.split(':').map(Number), y = b.split(':').map(Number); return x[0] - y[0] || x[1] - y[1]; });
+  const notes = {}, missing = [];
+  const defects = keys.map(k => {
+    const [gi, ii] = k.split(':').map(Number); const g = V.data.groups[gi];
+    const m = V.defects[k], label = defLabel(g, g.items[ii], m);
+    const t = String(V.notes[k] || '').trim();
+    if(t) notes[label] = t;
+    if(needNote(m) && t.length < 3){ missing.push(g.items[ii]); const ta = $('dn_' + gi + '_' + ii); if(ta) ta.classList.add('miss'); }
+    return label;
+  });
   const desc = $('cDesc').value.trim();
   if(!vehicle) return msg('checkMsg', 'err', 'Vyberte vozidlo.');
   if(!km) return msg('checkMsg', 'err', 'Zadejte stav tachometru (km).');
+  if(missing.length){ msg('checkMsg', 'err', 'Popište závadu: ' + missing.join(', ') + '.'); window.scrollTo({ top:0, behavior:'smooth' }); return; }
   if(!V.ok) return msg('checkMsg', 'err', 'Vyberte, zda je vozidlo technicky způsobilé k provozu (ANO / NE).');
-  if((defects.length || V.ok === 'NE') && desc.length < 3) return msg('checkMsg', 'err', 'Popište prosím zjištěnou závadu.');
+  if(V.ok === 'NE' && !defects.length && desc.length < 3) return msg('checkMsg', 'err', 'Napište, proč vozidlo není způsobilé k provozu.');
   if(!$('cConfirm').checked) return msg('checkMsg', 'err', 'Potvrďte provedení kontroly (zaškrtávací políčko dole).');
   $('cSend').disabled = true; busy(true, V.cPhotos.length ? 'Odesílám kontrolu a fotky…' : 'Odesílám kontrolu…');
   try{
-    V.data = await call('mVehCheck', { token:S.token, uid:uid(), vehicle, km, defects, desc, ok:V.ok, confirm:true,
+    V.data = await call('mVehCheck', { token:S.token, uid:uid(), vehicle, km, defects, notes, desc, ok:V.ok, confirm:true,
       photos: V.cPhotos.map(d => ({ b64:d })) });
     store.set('m_veh', vehicle);
-    msg('checkMsg', 'ok', defects.length ? `Kontrola ${vehicle} odeslána – ${defects.length} ${defects.length === 1 ? 'závada' : (defects.length < 5 ? 'závady' : 'závad')} nahlášeno garážmistrovi.` : `Kontrola ${vehicle} odeslána – vše bez závad. Šťastnou cestu!`);
+    msg('checkMsg', 'ok', defects.length ? `Kontrola ${vehicle} odeslána – ${defects.length} ${defects.length === 1 ? 'položka nahlášena' : (defects.length < 5 ? 'položky nahlášeny' : 'položek nahlášeno')} garážmistrovi.` : `Kontrola ${vehicle} odeslána – vše bez závad. Šťastnou cestu!`);
     resetCheck(); renderVehList();
   }catch(e){
     if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); } else msg('checkMsg', 'err', e);
