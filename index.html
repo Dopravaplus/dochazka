@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn · V3.23 vycentrované texty · V3.24 oddíl Základní údaje · V3.25 fotky u každé závady · V3.26 soukromá platební karta · V3.27 dříve nahlášené závady (popis na vlastním řádku) -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn · V3.23 vycentrované texty · V3.24 oddíl Základní údaje · V3.25 fotky u každé závady · V3.26 soukromá platební karta · V3.27 dříve nahlášené závady (popis na vlastním řádku) · V3.28 kratší údaj u nahlášené závady · V3.29 po odeslání návrat na úvod, formulář bez předvyplněného vozidla · V3.30–3.31 potvrzení s časem, zmizí po otevření další dlaždice -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -163,6 +163,7 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 
   <!-- V3.0 Úvod s dlaždicemi -->
   <div id="homeCard" class="hidden">
+    <div id="homeMsg" class="msg"></div>
     <div class="tiles">
       <button class="tile" onclick="openView('att')"><span class="ic b"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span><div class="tt">Docházka</div><div class="ts">Zapsat odpracovaný den</div></span><span class="ar">›</span></button>
       <button class="tile" onclick="openView('check')"><span class="ic g"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M9 13l2 2 4-4"/></svg></span><span><div class="tt">Kontrola vozidla</div><div class="ts">Před jízdou / při převzetí vozidla</div></span><span class="ar">›</span></button>
@@ -264,7 +265,7 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 <script>
 /* V3.14: automatická aktualizace – ikona na ploše (hlavně iPhone) drží starou stránku v mezipaměti.
    Po otevření se stránka zeptá GitHubu na aktuální verzi; když je novější, sama se načte znovu. */
-const APP_VER = '3.27';
+const APP_VER = '3.31';
 async function checkUpdate(){
   try{
     const r = await fetch('./?nocache=' + Date.now(), { cache:'no-store' });
@@ -381,7 +382,13 @@ function showView(v){
   $('topSub').textContent = S.name;
   window.scrollTo(0, 0);
 }
+/* V3.31: potvrzení na úvodu zůstane, dokud řidič neotevře další dlaždici; s časem odeslání */
+function homeOk(t){
+  const d = new Date(), hm = String(d.getHours()) + ':' + String(d.getMinutes()).padStart(2, '0');
+  msg('homeMsg', 'ok', '✓ ' + t + ' (' + hm + ')');
+}
 async function openView(v){
+  msg('homeMsg', '', '');
   if(v !== 'home'){ try{ history.pushState({ v }, '', '#' + v); }catch(e){} }
   showView(v);
   if(v === 'att') return;
@@ -480,7 +487,7 @@ function renderList(){
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
 function fmtKm(n){ return String(Math.round(n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
 function vehOptions(sel){
-  const last = store.get('m_veh');
+  const last = '';   // V3.29: vozidlo se nepředvyplňuje – řidič ho vybere vždy znovu (menší riziko záměny)
   const vs = (V.data && V.data.vehicles) || [];
   /* V3.2: vozidla seskupená podle pobočky (pořadí ze serveru – vlastní pobočka první) */
   const brs = [];
@@ -650,7 +657,7 @@ function knownFor(gi, ii){
   const g = V.data.groups[gi]; return kv.items[g.g + ': ' + g.items[ii]] || null;
 }
 function knownTxt(x){
-  return [x.mark !== 'závada' ? x.mark : '', x.date, x.who, x.state === 'Řeší se' ? 'řeší se' : 'čeká na řešení'].filter(Boolean).join(' · ');
+  return [x.mark !== 'závada' ? x.mark : '', x.date ? 'od ' + x.date : '', x.state === 'Řeší se' ? 'garážmistr řeší' : ''].filter(Boolean).join(' · ');   // V3.28: bez jména a „čeká na řešení“
 }
 function vehChanged(){
   const kv = V.data && V.data.known && V.data.known[$('cVeh').value];
@@ -759,8 +766,8 @@ async function sendCheck(){
       photos: V.cPhotos.map(d => ({ b64:d })),
       defPhotos: keys.flatMap(k => { const [gi, ii] = k.split(':').map(Number), g = V.data.groups[gi]; return (V.dPhotos[k] || []).map(d => ({ label: defLabel(g, g.items[ii], V.defects[k]), b64:d })); }) });
     store.set('m_veh', vehicle);
-    msg('checkMsg', 'ok', defects.length ? `Kontrola ${vehicle} odeslána – ${defects.length} ${defects.length === 1 ? 'položka nahlášena' : (defects.length < 5 ? 'položky nahlášeny' : 'položek nahlášeno')} garážmistrovi.` : `Kontrola ${vehicle} odeslána – vše bez závad. Šťastnou cestu!`);
-    resetCheck(); renderVehList();
+    homeOk(defects.length ? `Kontrola ${vehicle} odeslána – nahlášeno: ${defects.length} ${defects.length === 1 ? 'položka' : (defects.length < 5 ? 'položky' : 'položek')}.` : `Kontrola ${vehicle} odeslána – vše bez závad.`);
+    resetCheck(); renderVehList(); msg('checkMsg', '', ''); goHome();   // V3.29: zpět na úvod s potvrzením
   }catch(e){
     if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); } else msg('checkMsg', 'err', e);
   }finally{ $('cSend').disabled = false; busy(false); window.scrollTo({ top:0, behavior:'smooth' }); }
@@ -793,8 +800,8 @@ async function sendFuel(){
     V.data = await call('mVehFuel', { token:S.token, uid:uid(), vehicle, date, km, liters, pay, note:$('tNote').value,
       photo: V.tPhotos[0] ? { b64:V.tPhotos[0] } : null });
     store.set('m_veh', vehicle); store.set('m_pay', pay);
-    msg('fuelMsg', 'ok', `Tankování ${vehicle} odesláno – ${liters.replace('.', ',')} l, ${fmtKm(Number(km))} km. Čeká na zápis dispečinkem.`);
-    resetFuel(); renderVehList();
+    homeOk(`Tankování ${vehicle} odesláno – ${liters.replace('.', ',')} l.`);
+    resetFuel(); renderVehList(); msg('fuelMsg', '', ''); goHome();
   }catch(e){
     if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); } else msg('fuelMsg', 'err', e);
   }finally{ $('tSend').disabled = false; busy(false); window.scrollTo({ top:0, behavior:'smooth' }); }
