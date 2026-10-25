@@ -8,13 +8,13 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Dopravaplus</title>
 <style>
-:root{--blue:#1769e0;--blue2:#1257c0;--bg:#f2f4f7;--card:#fff;--text:#101828;--muted:#667085;--line:#e4e7ec;--green:#067647;--greenBg:#ecfdf3;--amber:#b54708;--amberBg:#fffaeb;--red:#b42318;--redBg:#fef3f2}
+:root{--blue:#1769e0;--blue2:#1257c0;--bg:#e9eff8;--card:#fff;--text:#101828;--muted:#667085;--line:#d8e1ee;--green:#067647;--greenBg:#ecfdf3;--amber:#b54708;--amberBg:#fffaeb;--red:#b42318;--redBg:#fef3f2}
 *{box-sizing:border-box}
 html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:-apple-system,'Segoe UI',Roboto,Arial,sans-serif;font-size:16px;-webkit-text-size-adjust:100%}
 .top{background:var(--blue);color:#fff;padding:calc(14px + env(safe-area-inset-top)) 16px 16px;position:sticky;top:0;z-index:5}
@@ -73,14 +73,19 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
 .tile .tt{font-size:17px;font-weight:800}
 .tile .ts{font-size:13px;color:var(--muted);margin-top:2px}
 .tile .ar{margin-left:auto;color:#98a2b3;font-size:22px}
-.ic.b{background:#eef4ff}.ic.g{background:#ecfdf3}.ic.a{background:#fffaeb}
+.ic.b{background:#1769e0}.ic.g{background:#079455}.ic.a{background:#f79009}
+/* V3.15: barvy – úvod s modrým přechodem a barevnými dlaždicemi, karty s jemným stínem */
+body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 120px) no-repeat,var(--bg)}
+.tile{border:0;box-shadow:0 2px 8px rgba(16,24,40,.10)}
+.tile .ic{width:52px;height:52px;border-radius:14px}
+.card{box-shadow:0 1px 3px rgba(16,24,40,.08)}
 .grp{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
 .grp:first-of-type{border-top:0;margin-top:0;padding-top:0}
 .grp{border-top:0 !important;margin-top:22px !important;padding-top:0 !important}
 .grp:first-of-type{margin-top:6px !important}
-.grp .gh{font-weight:900;font-size:17px;color:var(--text);border-left:4px solid var(--blue);padding:1px 0 1px 10px}
-.grp .gs{font-size:13px;font-weight:700;margin:3px 0 9px;padding-left:14px}
-.grp.has .gh{border-left-color:var(--red)}
+.grp .gh{font-weight:900;font-size:17px;color:var(--text);border-left:4px solid var(--blue);background:#eef3fc;border-radius:4px 10px 10px 4px;padding:8px 10px 8px 12px}
+.grp .gs{font-size:13px;font-weight:700;margin:5px 0 9px;padding-left:16px}
+.grp.has .gh{border-left-color:var(--red);background:#fdf0ef}
 .gs.okc{color:var(--green)}
 .onote{background:var(--redBg);padding:0 12px 12px}
 .mk{display:flex;gap:8px;margin-bottom:8px}
@@ -142,9 +147,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
   <!-- V3.0 Úvod s dlaždicemi -->
   <div id="homeCard" class="hidden">
     <div class="tiles">
-      <button class="tile" onclick="openView('att')"><span class="ic b">🕒</span><span><div class="tt">Docházka</div><div class="ts">Zapsat odpracovaný den</div></span><span class="ar">›</span></button>
-      <button class="tile" onclick="openView('check')"><span class="ic g">✅</span><span><div class="tt">Kontrola vozidla</div><div class="ts">Před jízdou / při převzetí vozidla</div></span><span class="ar">›</span></button>
-      <button class="tile" onclick="openView('fuel')"><span class="ic a">⛽</span><span><div class="tt">Tankování</div><div class="ts">Litry a stav km</div></span><span class="ar">›</span></button>
+      <button class="tile" onclick="openView('att')"><span class="ic b"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><span><div class="tt">Docházka</div><div class="ts">Zapsat odpracovaný den</div></span><span class="ar">›</span></button>
+      <button class="tile" onclick="openView('check')"><span class="ic g"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="4" width="14" height="17" rx="2"/><path d="M9 4h6v3H9z"/><path d="M9 13l2 2 4-4"/></svg></span><span><div class="tt">Kontrola vozidla</div><div class="ts">Před jízdou / při převzetí vozidla</div></span><span class="ar">›</span></button>
+      <button class="tile" onclick="openView('fuel')"><span class="ic a"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16"/><path d="M3 21h12"/><path d="M6 8h6"/><path d="M14 10h2a2 2 0 0 1 2 2v5a1.5 1.5 0 0 0 3 0V9l-3-3"/></svg></span><span><div class="tt">Tankování</div><div class="ts">Litry a stav km</div></span><span class="ar">›</span></button>
     </div>
   </div>
 
@@ -227,7 +232,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
 <script>
 /* V3.14: automatická aktualizace – ikona na ploše (hlavně iPhone) drží starou stránku v mezipaměti.
    Po otevření se stránka zeptá GitHubu na aktuální verzi; když je novější, sama se načte znovu. */
-const APP_VER = '3.14';
+const APP_VER = '3.15';
 async function checkUpdate(){
   try{
     const r = await fetch('./?nocache=' + Date.now(), { cache:'no-store' });
@@ -336,6 +341,7 @@ const VIEWS_ALL = ['homeCard','formCard','listCard','checkCard','fuelCard','vehL
 const TITLES = { home:'Dopravaplus', att:'Docházka', check:'Kontrola vozidla', fuel:'Tankování' };
 function showView(v){
   S.view = v;
+  document.body.classList.toggle('home', v === 'home');
   VIEWS_ALL.forEach(id => $(id).classList.toggle('hidden', VIEWS[v].indexOf(id) < 0));
   $('logoutBtn').classList.toggle('hidden', v !== 'home');
   $('backBtn').classList.toggle('hidden', v === 'home');
