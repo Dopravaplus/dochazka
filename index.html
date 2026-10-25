@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -36,6 +36,10 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
 .btn{width:100%;border:0;border-radius:12px;padding:14px;font-size:17px;font-weight:800;color:#fff;background:var(--blue)}
 .btn:active{background:var(--blue2)}
 .btn:disabled{opacity:.55}
+.btn.dim{background:#c7d7f5;color:#fff}
+.invalid{border-color:var(--red) !important;box-shadow:0 0 0 3px rgba(217,45,32,.15) !important}
+.yn.invalid,.mk.invalid,.conf.invalid{border-radius:12px;box-shadow:0 0 0 2px var(--red) !important;padding:4px}
+.ferr{color:var(--red);font-size:13px;font-weight:700;margin:6px 2px 0}
 .btn.sec{background:#fff;color:#344054;border:1px solid #d0d5dd}
 .hrs{font-size:14px;color:var(--muted);margin:-2px 0 12px}
 .hrs b{color:var(--text)}
@@ -147,36 +151,36 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
   <!-- V3.0 Kontrola vozidla -->
   <div id="checkCard" class="card hidden">
     <div id="checkMsg" class="msg"></div>
-    <div class="f"><label for="cVeh">Vozidlo</label><select id="cVeh" onchange="kmHint('c')"></select></div>
-    <div class="f"><label for="cKm">Stav tachometru (km)</label><input id="cKm" type="number" inputmode="numeric" placeholder="např. 558600" oninput="kmHint('c')"><div class="kmhint" id="cKmHint"></div></div>
+    <div class="f"><label for="cVeh">Vozidlo</label><select id="cVeh" onchange="kmHint('c');ready()"></select></div>
+    <div class="f"><label for="cKm">Stav tachometru (km)</label><input id="cKm" type="number" inputmode="numeric" placeholder="např. 558600" oninput="kmHint('c');ready()"><div class="kmhint" id="cKmHint"></div></div>
     <div class="hint" style="margin:0 0 10px">Označte <b>jen závady</b>. Co neoznačíte, je v pořádku.</div>
     <div id="cGroups"></div>
     <div id="cDefBox" class="hidden" style="margin-top:14px">
-      <div class="f"><label for="cDesc" id="cDescLabel">Doplňující popis (nepovinné)</label><textarea id="cDesc" maxlength="1500" placeholder="cokoli dalšího pro garážmistra"></textarea></div>
+      <div class="f"><label for="cDesc" id="cDescLabel">Doplňující popis (nepovinné)</label><textarea id="cDesc" maxlength="1500" placeholder="cokoli dalšího pro garážmistra" oninput="ready()"></textarea></div>
       <div class="f"><label>Fotografie závady (max. 2 – detail + celek)</label><div class="photos" id="cPhotos"></div></div>
     </div>
     <div class="f" style="margin-top:12px"><label>Vozidlo je technicky způsobilé k provozu</label>
-      <div class="yn"><button type="button" id="cOkY" class="y" onclick="setOk('ANO')">ANO</button><button type="button" id="cOkN" class="n" onclick="setOk('NE')">NE</button></div>
+      <div class="yn" id="cYN"><button type="button" id="cOkY" class="y" onclick="setOk('ANO')">ANO</button><button type="button" id="cOkN" class="n" onclick="setOk('NE')">NE</button></div>
       <div id="cOkWarn" class="warnbox hidden">Jízda je zakázána. Neprodleně kontaktujte dispečera nebo odpovědnou osobu.</div>
     </div>
-    <div class="f" style="margin-top:14px"><label class="conf"><input type="checkbox" id="cConfirm"><span id="cConfirmText"></span></label></div>
-    <button class="btn" id="cSend" onclick="sendCheck()">Odeslat kontrolu</button>
+    <div class="f" style="margin-top:14px"><label class="conf" id="cConfLbl"><input type="checkbox" id="cConfirm" onchange="ready()"><span id="cConfirmText"></span></label></div>
+    <button class="btn dim" id="cSend" onclick="sendCheck()">Odeslat kontrolu</button>
   </div>
 
   <!-- V3.0 Tankování -->
   <div id="fuelCard" class="card hidden">
     <div id="fuelMsg" class="msg"></div>
-    <div class="f"><label for="tVeh">Vozidlo</label><select id="tVeh" onchange="kmHint('t')"></select></div>
-    <div class="f"><label for="tDate">Datum tankování</label><input id="tDate" type="date"></div>
+    <div class="f"><label for="tVeh">Vozidlo</label><select id="tVeh" onchange="kmHint('t');readyFuel()"></select></div>
+    <div class="f"><label for="tDate">Datum tankování</label><input id="tDate" type="date" onchange="readyFuel()"></div>
     <div class="grid2">
-      <div class="f"><label for="tKm">Stav tachometru (km)</label><input id="tKm" type="number" inputmode="numeric" placeholder="558600" oninput="kmHint('t')"></div>
-      <div class="f"><label for="tL">Natankováno (litry)</label><input id="tL" type="text" inputmode="decimal" placeholder="72,5"></div>
+      <div class="f"><label for="tKm">Stav tachometru (km)</label><input id="tKm" type="number" inputmode="numeric" placeholder="558600" oninput="kmHint('t');readyFuel()"></div>
+      <div class="f"><label for="tL">Natankováno (litry)</label><input id="tL" type="text" inputmode="decimal" placeholder="72,5" oninput="readyFuel()"></div>
     </div>
     <div class="kmhint" id="tKmHint" style="margin:-6px 0 12px"></div>
-    <div class="f"><label for="tPay">Platba</label><select id="tPay" onchange="payHint()"></select></div>
+    <div class="f"><label for="tPay">Platba</label><select id="tPay" onchange="payHint();readyFuel()"></select></div>
     <div class="f"><label id="tPhLabel">Fotka účtenky</label><div class="photos" id="tPhotos"></div><div class="hint" id="tPhHint" style="margin-top:6px"></div></div>
     <div class="f"><label for="tNote">Poznámka (nepovinné)</label><textarea id="tNote" maxlength="300" placeholder="např. tankováno i AdBlue"></textarea></div>
-    <button class="btn" id="tSend" onclick="sendFuel()">Odeslat tankování</button>
+    <button class="btn dim" id="tSend" onclick="sendFuel()">Odeslat tankování</button>
     <div class="hint">Tankování zkontroluje dispečink a zapíše do karty vozidla. Dokud se tak nestane, můžete ho smazat.</div>
   </div>
 
@@ -190,7 +194,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
   <div id="formCard" class="card hidden">
     <h2 id="formTitle">Zapsat docházku</h2>
     <div id="formMsg" class="msg"></div>
-    <div class="f"><label for="fDate">Den</label><input id="fDate" type="date"></div>
+    <div class="f"><label for="fDate">Den</label><input id="fDate" type="date" onchange="readyAtt()"></div>
     <div class="grid2">
       <div class="f"><label for="fFrom">OD</label><input id="fFrom" type="time"></div>
       <div class="f"><label for="fTo">DO</label><input id="fTo" type="time"></div>
@@ -203,7 +207,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
     </div>
     <div class="hrs" id="fHours"></div>
     <div class="f"><label for="fNote">Poznámka (nepovinné)</label><textarea id="fNote" maxlength="300" placeholder="např. čekání na vykládku, oprava vozidla…"></textarea></div>
-    <button class="btn" id="sendBtn" onclick="send()">Odeslat dispečinku</button>
+    <button class="btn dim" id="sendBtn" onclick="send()">Odeslat dispečinku</button>
     <button class="btn sec hidden" id="cancelEditBtn" style="margin-top:8px" onclick="resetForm()">Zrušit úpravu</button>
     <div class="hint">Zápis se odešle ke schválení dispečinku. Dokud ho dispečink nepřevezme, můžete ho upravit nebo smazat.</div>
   </div>
@@ -263,7 +267,7 @@ function calcHours(){
   $('fHours').innerHTML = `Odpracováno: <b>${fmtH(h)} h</b>`;
   return h;
 }
-['fFrom','fTo','fPause'].forEach(id => document.addEventListener('DOMContentLoaded', () => $(id).addEventListener('input', calcHours)));
+['fFrom','fTo','fPause'].forEach(id => document.addEventListener('DOMContentLoaded', () => { $(id).addEventListener('input', () => { calcHours(); readyAtt(); }); $(id).addEventListener('change', readyAtt); }));
 
 /* ---------- přihlášení ---------- */
 async function init(){
@@ -354,7 +358,7 @@ function resetForm(){
   d.max = S.today; d.min = isoShift(S.today, -S.daysBack);
   d.value = S.today; d.disabled = false;
   $('fFrom').value = ''; $('fTo').value = ''; $('fPause').value = '0'; $('fNote').value = '';
-  calcHours();
+  calcHours(); TRIED.att = false; clearErrs('formCard'); readyAtt();
 }
 function editEntry(id){
   const e = S.entries.find(x => x.id === id); if(!e) return;
@@ -366,14 +370,14 @@ function editEntry(id){
   $('fPause').value = opt ? opt.value : '0';
   $('fNote').value = e.note || '';
   $('cancelEditBtn').classList.remove('hidden');
-  calcHours(); msg('formMsg', '', '');
+  calcHours(); msg('formMsg', '', ''); readyAtt();
   window.scrollTo({ top:0, behavior:'smooth' });
 }
 async function send(){
   const date = $('fDate').value, from = $('fFrom').value, to = $('fTo').value;
-  if(!date){ msg('formMsg', 'err', 'Vyberte den.'); return; }
-  if(!from || !to){ msg('formMsg', 'err', 'Vyplňte čas OD a DO.'); return; }
-  if(!(calcHours() > 0)){ msg('formMsg', 'err', 'Z časů vychází 0 hodin – zkontrolujte OD, DO a pauzu.'); return; }
+  msg('formMsg', '', '');
+  const errs = attErrs();
+  if(errs.length){ TRIED.att = true; showErrs('formCard', errs); goFirstErr(errs); return; }
   const dup = !S.editing && S.entries.find(x => x.date === date && x.state === 'Ke schválení');
   $('sendBtn').disabled = true; busy(true, 'Odesílám…');
   try{
@@ -463,6 +467,7 @@ function renderPhotos(key, boxId, max){
   let h = arr.map((d, i) => `<div class="ph"><img src="${d}" alt=""><button class="x" onclick="delPhoto('${key}','${boxId}',${max},${i})">✕</button></div>`).join('');
   if(arr.length < max) h += `<label class="ph"><span class="pi">📷</span>Přidat fotku<input type="file" accept="image/*" onchange="addPhoto(this,'${key}','${boxId}',${max})"></label>`;
   $(boxId).innerHTML = h;
+  if(key === 'tPhotos') readyFuel(); else ready();
 }
 async function addPhoto(inp, key, boxId, max){
   const f = inp.files && inp.files[0]; if(!f) return;
@@ -477,7 +482,7 @@ function delPhoto(key, boxId, max, i){ V[key].splice(i, 1); renderPhotos(key, bo
 function resetCheck(){
   vehOptions('cVeh'); $('cKm').value = ''; $('cDesc').value = ''; $('cConfirm').checked = false;
   $('cConfirmText').textContent = V.data.confirm;
-  V.defects = {}; V.notes = {}; V.open = {}; V.ok = ''; V.cPhotos = [];
+  V.defects = {}; V.notes = {}; V.open = {}; TRIED.check = false; clearErrs('checkCard'); V.ok = ''; V.cPhotos = [];
   renderGroups(); renderPhotos('cPhotos', 'cPhotos', 2); setOk(''); kmHint('c');
 }
 function renderGroups(){
@@ -485,16 +490,86 @@ function renderGroups(){
     const n = g.items.filter((it, ii) => V.defects[gi + ':' + ii]).length;
     return `<div class="grp ${n ? 'has' : ''}"><div class="gh">${esc(g.g)}</div><div class="gs ${n ? 'bad' : 'okc'}">${esc(grpState(g, n))}</div>
       <div class="opts">${g.items.map((it, ii) => { const k = gi + ':' + ii, on = V.defects[k], ms = marksOf(g); return `<button type="button" class="opt ${on ? 'on' : ''}" onclick="togDef(${gi},${ii})"><span class="ot">${esc(it)}${g.hints && g.hints[ii] ? `<span class="oh">${esc(g.hints[ii])}</span>` : ''}</span><span class="os">${on ? (on === '?' ? '✕ vyberte' : '✕ ' + esc(on)) : 'v pořádku'}</span></button>`
-        + (on ? `<div class="onote">${ms.length > 1 ? `<div class="mk">${ms.map(m => `<button type="button" class="${on === m ? 'on' : ''}" onclick="setMark(${gi},${ii},'${esc(m)}')">${esc(m)}</button>`).join('')}</div>` : ''}${noteBox(gi, ii, on)}</div>` : ''); }).join('')}</div></div>`;
+        + (on ? `<div class="onote">${ms.length > 1 ? `<div class="mk" id="mk_${gi}_${ii}">${ms.map(m => `<button type="button" class="${on === m ? 'on' : ''}" onclick="setMark(${gi},${ii},'${esc(m)}')">${esc(m)}</button>`).join('')}</div>` : ''}${noteBox(gi, ii, on)}</div>` : ''); }).join('')}</div></div>`;
   }).join('');
   defBox();
 }
 /* V3.7: společné pole a fotky – vidět jen při závadě nebo NE; při NE bez označené položky je popis povinný */
+/* V3.12: kontrola vyplnění – chyby se ukážou přímo u políček; tlačítko je světlé, dokud něco chybí */
+function checkErrs(){
+  const errs = [], add = (el, text, focus) => { if(el) errs.push({ el, text, focus }); };
+  if(!$('cVeh').value) add($('cVeh'), 'Vyberte vozidlo.', true);
+  if(!$('cKm').value.trim()) add($('cKm'), 'Zadejte stav tachometru.', true);
+  Object.keys(V.defects).sort((a, b) => { const x = a.split(':').map(Number), y = b.split(':').map(Number); return x[0] - y[0] || x[1] - y[1]; }).forEach(k => {
+    const [gi, ii] = k.split(':').map(Number), m = V.defects[k];
+    if(m === '?') add($('mk_' + gi + '_' + ii), 'Vyberte, zda položka chybí, nebo je poškozená.', false);
+    else if(needNote(m) && String(V.notes[k] || '').trim().length < 3) add($('dn_' + gi + '_' + ii), m === 'poškozeno' ? 'Popište poškození.' : 'Popište závadu.', true);
+  });
+  if(!V.ok) add($('cYN'), 'Vyberte ANO nebo NE.', false);
+  else if(V.ok === 'NE' && !Object.keys(V.defects).length && $('cDesc').value.trim().length < 3) add($('cDesc'), 'Napište, proč vozidlo není způsobilé k provozu.', true);
+  if(!$('cConfirm').checked) add($('cConfLbl'), 'Potvrďte provedení kontroly.', false);
+  return errs;
+}
+/* společné pro všechny formuláře: označení chyb u políček, posun na první chybu */
+function clearErrs(card){
+  document.querySelectorAll('#' + card + ' .invalid').forEach(e => e.classList.remove('invalid'));
+  document.querySelectorAll('#' + card + ' .ferr').forEach(e => e.remove());
+}
+function showErrs(card, errs){
+  clearErrs(card);
+  errs.forEach(x => { x.el.classList.add('invalid'); const d = document.createElement('div'); d.className = 'ferr'; d.textContent = x.text; x.el.insertAdjacentElement('afterend', d); });
+}
+function goFirstErr(errs){
+  const f = errs[0]; if(!f) return;
+  f.el.scrollIntoView({ behavior:'smooth', block:'center' });
+  if(f.focus) setTimeout(() => { try{ f.el.focus({ preventScroll:true }); }catch(e){} }, 350);
+}
+const TRIED = { check:false, fuel:false, att:false };
+function ready(){
+  const btn = $('cSend'); if(!btn || !V.data) return;
+  const errs = checkErrs();
+  btn.classList.toggle('dim', errs.length > 0);
+  if(TRIED.check) showErrs('checkCard', errs);      // po prvním pokusu o odeslání se označení průběžně aktualizuje
+}
+/* V3.13: tankování */
+function fuelErrs(){
+  const errs = [], add = (el, text, focus) => { if(el) errs.push({ el, text, focus }); };
+  if(!$('tVeh').value) add($('tVeh'), 'Vyberte vozidlo.', true);
+  if(!$('tDate').value) add($('tDate'), 'Vyberte datum tankování.', true);
+  if(!$('tKm').value.trim()) add($('tKm'), 'Zadejte stav tachometru.', true);
+  const l = Number($('tL').value.trim().replace(',', '.'));
+  if(!(l > 0)) add($('tL'), 'Zadejte litry, např. 72,5.', true);
+  else if(l > 400) add($('tL'), 'Tolik litrů nejde – zkontrolujte číslo.', true);
+  if(isCash() && !V.tPhotos.length) add($('tPhotos'), 'Při platbě hotově vyfoťte účtenku.', false);
+  return errs;
+}
+function readyFuel(){
+  const btn = $('tSend'); if(!btn || !V.data) return;
+  const errs = fuelErrs();
+  btn.classList.toggle('dim', errs.length > 0);
+  if(TRIED.fuel) showErrs('fuelCard', errs);
+}
+/* V3.13: docházka */
+function attErrs(){
+  const errs = [], add = (el, text, focus) => { if(el) errs.push({ el, text, focus }); };
+  if(!$('fDate').value) add($('fDate'), 'Vyberte den.', true);
+  if(!$('fFrom').value) add($('fFrom'), 'Zadejte čas OD.', true);
+  if(!$('fTo').value) add($('fTo'), 'Zadejte čas DO.', true);
+  if($('fFrom').value && $('fTo').value && !(calcHours() > 0)) add($('fPause'), 'Z časů vychází 0 hodin – zkontrolujte OD, DO a pauzu.', false);
+  return errs;
+}
+function readyAtt(){
+  const btn = $('sendBtn'); if(!btn) return;
+  const errs = attErrs();
+  btn.classList.toggle('dim', errs.length > 0);
+  if(TRIED.att) showErrs('formCard', errs);
+}
 function defBox(){
   const any = Object.keys(V.defects).length > 0;
   $('cDefBox').classList.toggle('hidden', !any && V.ok !== 'NE');
   const need = V.ok === 'NE' && !any;
   $('cDescLabel').textContent = need ? 'Proč vozidlo není způsobilé k provozu (povinné)' : 'Doplňující popis (nepovinné)';
+  ready();
 }
 /* V3.6: stav skupiny pod názvem – podle druhu (závada / chybí / nízký stav) */
 /* V3.8: druhy označení skupiny (výbava: chybí / poškozeno), popis povinný u „závada“ a „poškozeno“ */
@@ -503,7 +578,7 @@ function noteBox(gi, ii, m){
   const k = gi + ':' + ii;
   if(m === '?') return '';
   if(needNote(m) || V.open[k] || V.notes[k])
-    return `<textarea id="dn_${gi}_${ii}" maxlength="400" placeholder="${needNote(m) ? 'Popište ' + (m === 'poškozeno' ? 'poškození' : 'závadu') + ' – co, kde, jak se projevuje (povinné)' : 'Poznámka (nepovinné)'}" oninput="V.notes['${k}']=this.value;this.classList.remove('miss')">${esc(V.notes[k] || '')}</textarea>`;
+    return `<textarea id="dn_${gi}_${ii}" maxlength="400" placeholder="${needNote(m) ? 'Popište ' + (m === 'poškozeno' ? 'poškození' : 'závadu') + ' – co, kde, jak se projevuje (povinné)' : 'Poznámka (nepovinné)'}" oninput="V.notes['${k}']=this.value;ready()">${esc(V.notes[k] || '')}</textarea>`;
   return `<button type="button" class="addn" onclick="openNote(${gi},${ii})">+ přidat poznámku</button> <span style="font-size:13px;color:var(--muted)">(nepovinné)</span>`;
 }
 function openNote(gi, ii){ V.open[gi + ':' + ii] = 1; renderGroups(); const ta = $('dn_' + gi + '_' + ii); if(ta) ta.focus({ preventScroll:true }); }
@@ -544,24 +619,21 @@ function setOk(v){
 async function sendCheck(){
   const vehicle = $('cVeh').value, km = $('cKm').value.trim();
   const keys = Object.keys(V.defects).sort((a, b) => { const x = a.split(':').map(Number), y = b.split(':').map(Number); return x[0] - y[0] || x[1] - y[1]; });
-  const notes = {}, missing = [], noKind = [];
+  const notes = {};
   const defects = keys.map(k => {
     const [gi, ii] = k.split(':').map(Number); const g = V.data.groups[gi];
     const m = V.defects[k], label = defLabel(g, g.items[ii], m);
-    if(m === '?') noKind.push(g.items[ii]);
     const t = String(V.notes[k] || '').trim();
     if(t) notes[label] = t;
-    if(needNote(m) && t.length < 3){ missing.push(g.items[ii]); const ta = $('dn_' + gi + '_' + ii); if(ta) ta.classList.add('miss'); }
     return label;
   });
   const desc = $('cDesc').value.trim();
-  if(!vehicle) return msg('checkMsg', 'err', 'Vyberte vozidlo.');
-  if(!km) return msg('checkMsg', 'err', 'Zadejte stav tachometru (km).');
-  if(noKind.length){ msg('checkMsg', 'err', 'Vyberte chybí nebo poškozeno: ' + noKind.join(', ') + '.'); window.scrollTo({ top:0, behavior:'smooth' }); return; }
-  if(missing.length){ msg('checkMsg', 'err', 'Popište závadu: ' + missing.join(', ') + '.'); window.scrollTo({ top:0, behavior:'smooth' }); return; }
-  if(!V.ok) return msg('checkMsg', 'err', 'Vyberte, zda je vozidlo technicky způsobilé k provozu (ANO / NE).');
-  if(V.ok === 'NE' && !defects.length && desc.length < 3) return msg('checkMsg', 'err', 'Napište, proč vozidlo není způsobilé k provozu.');
-  if(!$('cConfirm').checked) return msg('checkMsg', 'err', 'Potvrďte provedení kontroly (zaškrtávací políčko dole).');
+  msg('checkMsg', '', '');
+  const errs = checkErrs();
+  if(errs.length){
+    TRIED.check = true; showErrs('checkCard', errs); goFirstErr(errs);
+    return;
+  }
   $('cSend').disabled = true; busy(true, V.cPhotos.length ? 'Odesílám kontrolu a fotky…' : 'Odesílám kontrolu…');
   try{
     V.data = await call('mVehCheck', { token:S.token, uid:uid(), vehicle, km, defects, notes, desc, ok:V.ok, confirm:true,
@@ -582,6 +654,7 @@ function resetFuel(){
   const lp = store.get('m_pay');
   $('tPay').innerHTML = V.data.pays.map(p => `<option ${p === (lp || V.data.pays[0]) ? 'selected' : ''}>${esc(p)}</option>`).join('');
   V.tPhotos = []; renderPhotos('tPhotos', 'tPhotos', 1); kmHint('t'); payHint();
+  TRIED.fuel = false; clearErrs('fuelCard'); readyFuel();
 }
 /* V3.1: fotka účtenky je povinná jen při platbě hotově – jinak stačí odevzdat účtenku na dispečink */
 function isCash(){ return /hotov/i.test($('tPay').value || ''); }
@@ -592,11 +665,9 @@ function payHint(){
 }
 async function sendFuel(){
   const vehicle = $('tVeh').value, date = $('tDate').value, km = $('tKm').value.trim(), liters = $('tL').value.trim(), pay = $('tPay').value;
-  if(!vehicle) return msg('fuelMsg', 'err', 'Vyberte vozidlo.');
-  if(!date) return msg('fuelMsg', 'err', 'Vyberte datum tankování.');
-  if(!km) return msg('fuelMsg', 'err', 'Zadejte stav tachometru (km).');
-  if(!(Number(liters.replace(',', '.')) > 0)) return msg('fuelMsg', 'err', 'Zadejte natankované litry (např. 72,5).');
-  if(isCash() && !V.tPhotos.length) return msg('fuelMsg', 'err', 'Při platbě hotově vyfoťte prosím účtenku.');
+  msg('fuelMsg', '', '');
+  const errs = fuelErrs();
+  if(errs.length){ TRIED.fuel = true; showErrs('fuelCard', errs); goFirstErr(errs); return; }
   $('tSend').disabled = true; busy(true, V.tPhotos.length ? 'Odesílám tankování a účtenku…' : 'Odesílám tankování…');
   try{
     V.data = await call('mVehFuel', { token:S.token, uid:uid(), vehicle, date, km, liters, pay, note:$('tNote').value,
