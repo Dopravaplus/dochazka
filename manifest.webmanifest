@@ -1,7 +1,7 @@
 {
   "name": "Dopravaplus",
   "short_name": "Dopravaplus",
-  "description": "Docházka řidičů a závozníků",
+  "description": "Docházka, kontrola vozidla a tankování - řidiči a závozníci",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
