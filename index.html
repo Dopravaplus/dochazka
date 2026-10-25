@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -135,7 +135,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
 
   <!-- V3.0 Kontrola vozidla -->
   <div id="checkCard" class="card hidden">
-    <h2>Kontrola vozidla</h2>
     <div id="checkMsg" class="msg"></div>
     <div class="f"><label for="cVeh">Vozidlo</label><select id="cVeh" onchange="kmHint('c')"></select></div>
     <div class="f"><label for="cKm">Stav tachometru (km)</label><input id="cKm" type="number" inputmode="numeric" placeholder="např. 558600" oninput="kmHint('c')"><div class="kmhint" id="cKmHint"></div></div>
@@ -155,7 +154,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
 
   <!-- V3.0 Tankování -->
   <div id="fuelCard" class="card hidden">
-    <h2>Tankování</h2>
     <div id="fuelMsg" class="msg"></div>
     <div class="f"><label for="tVeh">Vozidlo</label><select id="tVeh" onchange="kmHint('t')"></select></div>
     <div class="f"><label for="tDate">Datum tankování</label><input id="tDate" type="date"></div>
