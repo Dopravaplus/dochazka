@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn · V3.23 vycentrované texty · V3.24 oddíl Základní údaje · V3.25 fotky u každé závady -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn · V3.23 vycentrované texty · V3.24 oddíl Základní údaje · V3.25 fotky u každé závady · V3.26 soukromá platební karta -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -256,7 +256,7 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 <script>
 /* V3.14: automatická aktualizace – ikona na ploše (hlavně iPhone) drží starou stránku v mezipaměti.
    Po otevření se stránka zeptá GitHubu na aktuální verzi; když je novější, sama se načte znovu. */
-const APP_VER = '3.25';
+const APP_VER = '3.26';
 async function checkUpdate(){
   try{
     const r = await fetch('./?nocache=' + Date.now(), { cache:'no-store' });
@@ -591,7 +591,7 @@ function fuelErrs(){
   const l = Number($('tL').value.trim().replace(',', '.'));
   if(!(l > 0)) add($('tL'), 'Zadejte litry, např. 72,5.', true);
   else if(l > 400) add($('tL'), 'Tolik litrů nejde – zkontrolujte číslo.', true);
-  if(isCash() && !V.tPhotos.length) add($('tPhotos'), 'Při platbě hotově vyfoťte účtenku.', false);
+  if(isCash() && !V.tPhotos.length) add($('tPhotos'), 'Vyfoťte účtenku (platba hotově nebo soukromou kartou).', false);
   return errs;
 }
 function readyFuel(){
@@ -754,10 +754,10 @@ function resetFuel(){
   TRIED.fuel = false; clearErrs('fuelCard'); readyFuel();
 }
 /* V3.1: fotka účtenky je povinná jen při platbě hotově – jinak stačí odevzdat účtenku na dispečink */
-function isCash(){ return /hotov/i.test($('tPay').value || ''); }
+function isCash(){ return /hotov|soukrom/i.test($('tPay').value || ''); }   // V3.26: hotově i soukromá karta = platil ze svého
 function payHint(){
   const cash = isCash();
-  $('tPhLabel').textContent = cash ? 'Fotka účtenky (povinná při platbě hotově)' : 'Fotka účtenky (nepovinné)';
+  $('tPhLabel').textContent = cash ? 'Fotka účtenky (povinná)' : 'Fotka účtenky (nepovinné)';
   $('tPhHint').textContent = cash ? 'Vyfoťte účtenku hned u pumpy. Papírovou účtenku i tak odevzdejte na dispečink.' : 'Stačí odevzdat papírovou účtenku na dispečink.';
 }
 async function sendFuel(){
