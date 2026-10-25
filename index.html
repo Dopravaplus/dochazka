@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -72,9 +72,12 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
 .ic.b{background:#eef4ff}.ic.g{background:#ecfdf3}.ic.a{background:#fffaeb}
 .grp{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
 .grp:first-of-type{border-top:0;margin-top:0;padding-top:0}
-.grp .gh{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:15px;margin-bottom:8px}
-.grp .gh span{font-size:12px;font-weight:800;border-radius:999px;padding:2px 9px}
-.gh .okc{background:var(--greenBg);color:var(--green)}.gh .bad{background:var(--redBg);color:var(--red)}
+.grp{border-top:0 !important;margin-top:22px !important;padding-top:0 !important}
+.grp:first-of-type{margin-top:6px !important}
+.grp .gh{font-weight:900;font-size:17px;color:var(--text);border-left:4px solid var(--blue);padding:1px 0 1px 10px}
+.grp .gs{font-size:13px;font-weight:700;margin:3px 0 9px;padding-left:14px}
+.grp.has .gh{border-left-color:var(--red)}
+.gs.okc{color:var(--green)}.gs.bad{color:var(--red)}
 /* V3.2: položky kontroly pod sebou – řádek = položka, vpravo stav */
 .opts{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden}
 .opt{display:flex;align-items:center;gap:10px;width:100%;border:0;border-top:1px solid var(--line);background:#fff;padding:12px 12px;font-size:15px;font-weight:600;color:#344054;font-family:inherit;text-align:left;line-height:1.3}
@@ -472,11 +475,19 @@ function resetCheck(){
 function renderGroups(){
   $('cGroups').innerHTML = V.data.groups.map((g, gi) => {
     const n = g.items.filter((it, ii) => V.defects[gi + ':' + ii]).length;
-    return `<div class="grp"><div class="gh">${esc(g.g)}${n ? `<span class="bad">${n} ${n === 1 ? 'závada' : (n < 5 ? 'závady' : 'závad')}</span>` : '<span class="okc">v pořádku</span>'}</div>
+    return `<div class="grp ${n ? 'has' : ''}"><div class="gh">${esc(g.g)}</div><div class="gs ${n ? 'bad' : 'okc'}">${esc(grpState(g, n))}</div>
       <div class="opts">${g.items.map((it, ii) => { const on = V.defects[gi + ':' + ii]; return `<button type="button" class="opt ${on ? 'on' : ''}" onclick="togDef(${gi},${ii})"><span class="ot">${esc(it)}${g.hints && g.hints[ii] ? `<span class="oh">${esc(g.hints[ii])}</span>` : ''}</span><span class="os">${on ? '✕ ' + esc(g.mark || 'závada') : 'v pořádku'}</span></button>`; }).join('')}</div></div>`;
   }).join('');
   const any = Object.keys(V.defects).length > 0;
   $('cDefBox').classList.toggle('hidden', !any && V.ok !== 'NE');
+}
+/* V3.6: stav skupiny pod názvem – podle druhu (závada / chybí / nízký stav) */
+function grpState(g, n){
+  if(!n) return '✓ vše v pořádku';
+  const pol = n === 1 ? 'položka' : (n < 5 ? 'položky' : 'položek'), pol2 = n === 1 ? 'položky' : 'položek';
+  if(g.mark === 'chybí') return `✕ chybí ${n} ${pol}`;
+  if(g.mark === 'nízký stav') return `✕ nízký stav u ${n} ${pol2}`;
+  return `✕ ${n} ${n === 1 ? 'závada' : (n < 5 ? 'závady' : 'závad')}`;
 }
 function togDef(gi, ii){
   const k = gi + ':' + ii;
