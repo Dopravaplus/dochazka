@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn · V3.23 vycentrované texty · V3.24 oddíl Základní údaje · V3.25 fotky u každé závady · V3.26 soukromá platební karta -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn · V3.23 vycentrované texty · V3.24 oddíl Základní údaje · V3.25 fotky u každé závady · V3.26 soukromá platební karta · V3.27 dříve nahlášené závady (popis na vlastním řádku) -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -86,6 +86,13 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 .grp .gh{font-weight:900;font-size:17px;color:var(--text);border-left:4px solid var(--blue);background:#eef3fc;border-radius:4px 10px 10px 4px;padding:8px 10px 8px 12px}
 .grp .gs{font-size:13px;font-weight:700;margin:5px 0 9px;padding-left:16px}
 .grp.has .gh{border-left-color:var(--red);background:#fdf0ef}
+/* V3.27: dříve nahlášené (nevyřešené) závady */
+.grp.knw:not(.has) .gh{border-left-color:#f79009;background:#fffaeb}
+.gs.knc{color:var(--amber)}
+.opt.kn{background:#fffcf2}
+.opt .os.kn{background:var(--amberBg);color:var(--amber);border:1px solid #fedf89}
+.opt .kn-note{display:block;font-size:13px;font-weight:600;color:var(--amber);margin-top:3px}
+.nzban{background:var(--red);color:#fff;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14.5px;line-height:1.4;margin-top:14px;text-align:center}
 .gs.okc{color:var(--green)}
 .gs.mut{color:var(--muted);font-weight:600}
 .secbox{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}
@@ -169,10 +176,11 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
     <!-- V3.21: vozidlo a km jako první oddíl -->
     <div class="grp sec" style="margin-top:4px !important"><div class="gh">Základní údaje</div><div class="gs mut">povinné</div>
       <div class="secbox">
-        <div class="f"><label for="cVeh">Vozidlo</label><select id="cVeh" onchange="kmHint('c');ready()"></select></div>
+        <div class="f"><label for="cVeh">Vozidlo</label><select id="cVeh" onchange="kmHint('c');vehChanged()"></select></div>
         <div class="f" style="margin-bottom:0"><label for="cKm">Stav tachometru (km)</label><input id="cKm" type="number" inputmode="numeric" placeholder="např. 558600" oninput="kmHint('c');ready()"><div class="kmhint" id="cKmHint"></div></div>
       </div>
     </div>
+    <div id="cNZ" class="nzban hidden">Vozidlo je nahlášené jako nezpůsobilé k provozu. Před jízdou kontaktujte dispečera.</div>
     <div class="infobox" style="text-align:center"><b>Označte jen to, co není v pořádku.</b></div>
     <div id="cGroups"></div>
     <!-- V3.19: závěr kontroly ve dvou oddílech se stejným vzhledem jako skupiny -->
@@ -256,7 +264,7 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 <script>
 /* V3.14: automatická aktualizace – ikona na ploše (hlavně iPhone) drží starou stránku v mezipaměti.
    Po otevření se stránka zeptá GitHubu na aktuální verzi; když je novější, sama se načte znovu. */
-const APP_VER = '3.26';
+const APP_VER = '3.27';
 async function checkUpdate(){
   try{
     const r = await fetch('./?nocache=' + Date.now(), { cache:'no-store' });
@@ -526,7 +534,7 @@ function resetCheck(){
   vehOptions('cVeh'); $('cKm').value = ''; $('cDesc').value = ''; $('cConfirm').checked = false;
   $('cConfirmText').textContent = V.data.confirm;
   V.defects = {}; V.notes = {}; V.open = {}; V.exp = {}; V.dPhotos = {}; TRIED.check = false; clearErrs('checkCard'); V.ok = ''; V.cPhotos = [];
-  renderGroups(); renderPhotos('cPhotos', 'cPhotos', 4); setOk(''); kmHint('c');
+  vehChanged(); renderPhotos('cPhotos', 'cPhotos', 4); setOk(''); kmHint('c');
 }
 function renderGroups(){
   V.rendering = true;
@@ -536,12 +544,14 @@ function renderGroups(){
 function renderGroups_(){
   $('cGroups').innerHTML = V.data.groups.map((g, gi) => {
     const n = g.items.filter((it, ii) => V.defects[gi + ':' + ii]).length;
-    return `<div class="grp ${n ? 'has' : ''}"><div class="gh">${esc(g.g)}</div><div class="gs ${n ? 'bad' : 'okc'}">${esc(grpState(g, n))}</div>
+    const nk = g.items.filter((it, ii) => !V.defects[gi + ':' + ii] && knownFor(gi, ii)).length;
+    return `<div class="grp ${n ? 'has' : ''} ${nk ? 'knw' : ''}"><div class="gh">${esc(g.g)}</div><div class="gs ${n ? 'bad' : (nk ? 'knc' : 'okc')}">${esc((n || !nk ? grpState(g, n) : '') + (nk ? (n ? ' · ' : '') + 'nahlášeno dříve: ' + nk + (nk === 1 ? ' položka' : (nk < 5 ? ' položky' : ' položek')) : ''))}</div>
       <div class="opts">${g.items.map((it, ii) => {
         const k = gi + ':' + ii, on = V.defects[k], ms = marksOf(g), open = on && isOpen(gi, ii), note = String(V.notes[k] || '').trim();
-        const np = (V.dPhotos[k] || []).length;
+        const np = (V.dPhotos[k] || []).length, kn = !on && knownFor(gi, ii);
         const sub = on && !open && (note || np) ? `<span class="on-note">${esc(note)}${np ? (note ? ' · ' : '') + np + (np === 1 ? ' fotka' : ' fotky') : ''}</span>` : (g.hints && g.hints[ii] ? `<span class="oh">${esc(g.hints[ii])}</span>` : '');
-        return `<button type="button" class="opt ${on ? 'on' : ''}" onclick="togDef(${gi},${ii})"><span class="ot">${esc(it)}${sub}</span>${on ? `<span class="os">${on === '?' ? 'vyberte' : esc(on)}</span>` : '<span class="os ok" aria-label="v pořádku"></span>'}</button>`
+        const sub2 = kn ? `<span class="kn-note">${esc(knownTxt(kn))}</span>${kn.note ? `<span class="kn-note" style="font-weight:500">${esc(kn.note)}</span>` : ''}` : sub;
+        return `<button type="button" class="opt ${on ? 'on' : (kn ? 'kn' : '')}" onclick="togDef(${gi},${ii})"><span class="ot">${esc(it)}${sub2}</span>${on ? `<span class="os">${on === '?' ? 'vyberte' : esc(on)}</span>` : (kn ? `<span class="os kn">nahlášeno</span>` : '<span class="os ok" aria-label="v pořádku"></span>')}</button>`
         + (open ? `<div class="onote">${ms.length > 1 ? `<div class="mk" id="mk_${gi}_${ii}">${ms.map(m => `<button type="button" class="${on === m ? 'on' : ''}" onclick="setMark(${gi},${ii},'${esc(m)}')">${esc(m)}</button>`).join('')}</div>` : ''}${noteBox(gi, ii, on)}${needNote(on) ? defPhotos(gi, ii) : ''}<button type="button" class="rm" onclick="removeDef(${gi},${ii})">Zrušit označení</button></div>` : ''); }).join('')}</div></div>`;
   }).join('');
 }
@@ -630,10 +640,23 @@ function noteBox(gi, ii, m){
   const k = gi + ':' + ii;
   if(m === '?') return '';
   if(needNote(m))
-    return `<textarea id="dn_${gi}_${ii}" maxlength="400" placeholder="${needNote(m) ? 'Popište ' + (m === 'poškozeno' ? 'poškození' : 'závadu') + ' – co, kde, jak se projevuje (povinné)' : 'Poznámka (nepovinné)'}" oninput="V.notes['${k}']=this.value;ready()" onblur="noteDone(${gi},${ii})">${esc(V.notes[k] || '')}</textarea>`;
+    return `<textarea id="dn_${gi}_${ii}" maxlength="400" placeholder="${knownFor(gi, ii) ? 'Už nahlášeno – co je nového? (povinné)' : (needNote(m) ? 'Popište ' + (m === 'poškozeno' ? 'poškození' : 'závadu') + ' – co, kde, jak se projevuje (povinné)' : 'Poznámka (nepovinné)')}" oninput="V.notes['${k}']=this.value;ready()" onblur="noteDone(${gi},${ii})">${esc(V.notes[k] || '')}</textarea>`;
   return '';   // V3.16: u „chybí“ a „nízký stav“ bez poznámky (stačí doplňující popis dole)
 }
 function openNote(gi, ii){ V.open[gi + ':' + ii] = 1; renderGroups(); const ta = $('dn_' + gi + '_' + ii); if(ta) ta.focus({ preventScroll:true }); }
+/* V3.27: dříve nahlášené závady vybraného vozidla (garážmistr je zatím nevyřešil) */
+function knownFor(gi, ii){
+  const kv = V.data && V.data.known && V.data.known[$('cVeh').value]; if(!kv) return null;
+  const g = V.data.groups[gi]; return kv.items[g.g + ': ' + g.items[ii]] || null;
+}
+function knownTxt(x){
+  return [x.mark !== 'závada' ? x.mark : '', x.date, x.who, x.state === 'Řeší se' ? 'řeší se' : 'čeká na řešení'].filter(Boolean).join(' · ');
+}
+function vehChanged(){
+  const kv = V.data && V.data.known && V.data.known[$('cVeh').value];
+  $('cNZ').classList.toggle('hidden', !(kv && kv.nz));
+  renderGroups();
+}
 function marksOf(g){ return g.marks && g.marks.length ? g.marks : [g.mark || 'závada']; }
 function needNote(m){ return m === 'závada' || m === 'poškozeno'; }
 function defLabel(g, item, m){ return g.g + ': ' + item + (m === 'závada' ? '' : ' – ' + m); }
