@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Docházka">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -75,10 +75,14 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:#84adff;box-sh
 .grp .gh{display:flex;justify-content:space-between;align-items:center;font-weight:800;font-size:15px;margin-bottom:8px}
 .grp .gh span{font-size:12px;font-weight:800;border-radius:999px;padding:2px 9px}
 .gh .okc{background:var(--greenBg);color:var(--green)}.gh .bad{background:var(--redBg);color:var(--red)}
-.opts{display:flex;flex-wrap:wrap;gap:8px}
-.opt{border:1px solid #d0d5dd;background:#fff;border-radius:999px;padding:9px 13px;font-size:14.5px;font-weight:600;color:#344054;font-family:inherit;text-align:left}
-.opt.on{background:var(--redBg);border-color:#fda29b;color:var(--red)}
-.opt.on::before{content:'✕ ';font-weight:800}
+/* V3.2: položky kontroly pod sebou – řádek = položka, vpravo stav */
+.opts{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.opt{display:flex;align-items:center;gap:10px;width:100%;border:0;border-top:1px solid var(--line);background:#fff;padding:12px 12px;font-size:15px;font-weight:600;color:#344054;font-family:inherit;text-align:left;line-height:1.3}
+.opt:first-child{border-top:0}
+.opt .ot{flex:1}
+.opt .os{flex:0 0 auto;font-size:12.5px;font-weight:800;border-radius:999px;padding:4px 10px;background:#f2f4f7;color:#667085}
+.opt.on{background:var(--redBg);color:var(--red)}
+.opt.on .os{background:var(--red);color:#fff}
 .allok{background:var(--greenBg);color:var(--green);border-radius:12px;padding:11px 13px;font-weight:700;font-size:14px}
 .yn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .yn button{border:1px solid #d0d5dd;background:#fff;border-radius:12px;padding:13px;font-size:16px;font-weight:800;color:#344054;font-family:inherit}
@@ -412,8 +416,12 @@ function fmtKm(n){ return String(Math.round(n || 0)).replace(/\B(?=(\d{3})+(?!\d
 function vehOptions(sel){
   const last = store.get('m_veh');
   const vs = (V.data && V.data.vehicles) || [];
-  $(sel).innerHTML = '<option value="">— vyberte vozidlo —</option>' + vs.map(v =>
-    `<option value="${esc(v.code)}" ${v.code === last ? 'selected' : ''}>${esc(v.code)} – ${esc(v.spz)}</option>`).join('');
+  /* V3.2: vozidla seskupená podle pobočky (pořadí ze serveru – vlastní pobočka první) */
+  const brs = [];
+  vs.forEach(v => { const b = v.branch || 'Ostatní'; if(brs.indexOf(b) < 0) brs.push(b); });
+  $(sel).innerHTML = '<option value="">— vyberte vozidlo —</option>' + brs.map(b =>
+    `<optgroup label="${esc(b)}">` + vs.filter(v => (v.branch || 'Ostatní') === b).map(v =>
+      `<option value="${esc(v.code)}" ${v.code === last ? 'selected' : ''}>${esc(v.code)} – ${esc(v.spz)}</option>`).join('') + '</optgroup>').join('');
 }
 function vehOf(code){ return ((V.data && V.data.vehicles) || []).find(v => v.code === code); }
 function kmHint(p){
@@ -465,7 +473,7 @@ function renderGroups(){
   $('cGroups').innerHTML = V.data.groups.map((g, gi) => {
     const n = g.items.filter((it, ii) => V.defects[gi + ':' + ii]).length;
     return `<div class="grp"><div class="gh">${esc(g.g)}${n ? `<span class="bad">${n} ${n === 1 ? 'závada' : (n < 5 ? 'závady' : 'závad')}</span>` : '<span class="okc">v pořádku</span>'}</div>
-      <div class="opts">${g.items.map((it, ii) => `<button type="button" class="opt ${V.defects[gi + ':' + ii] ? 'on' : ''}" onclick="togDef(${gi},${ii})">${esc(it)}</button>`).join('')}</div></div>`;
+      <div class="opts">${g.items.map((it, ii) => { const on = V.defects[gi + ':' + ii]; return `<button type="button" class="opt ${on ? 'on' : ''}" onclick="togDef(${gi},${ii})"><span class="ot">${esc(it)}</span><span class="os">${on ? '✕ závada' : 'v pořádku'}</span></button>`; }).join('')}</div></div>`;
   }).join('');
   const any = Object.keys(V.defects).length > 0;
   $('cDefBox').classList.toggle('hidden', !any && V.ok !== 'NE');
