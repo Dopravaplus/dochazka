@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -105,6 +105,8 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 .opt .os{flex:0 0 auto;font-size:12.5px;font-weight:800;border-radius:999px;padding:4px 10px;background:#f2f4f7;color:#667085}
 .opt.on{background:var(--redBg);color:var(--red)}
 .opt.on .os{background:var(--red);color:#fff}
+/* V3.16: neoznačená položka = prázdné kolečko, označená = červený štítek */
+.opt .os.ok{width:22px;height:22px;padding:0;background:none;border:2px solid #c3ccd9;border-radius:50%}
 .allok{background:var(--greenBg);color:var(--green);border-radius:12px;padding:11px 13px;font-weight:700;font-size:14px}
 .yn{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .yn button{border:1px solid #d0d5dd;background:#fff;border-radius:12px;padding:13px;font-size:16px;font-weight:800;color:#344054;font-family:inherit}
@@ -232,7 +234,7 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 <script>
 /* V3.14: automatická aktualizace – ikona na ploše (hlavně iPhone) drží starou stránku v mezipaměti.
    Po otevření se stránka zeptá GitHubu na aktuální verzi; když je novější, sama se načte znovu. */
-const APP_VER = '3.15';
+const APP_VER = '3.16';
 async function checkUpdate(){
   try{
     const r = await fetch('./?nocache=' + Date.now(), { cache:'no-store' });
@@ -508,7 +510,7 @@ function renderGroups(){
   $('cGroups').innerHTML = V.data.groups.map((g, gi) => {
     const n = g.items.filter((it, ii) => V.defects[gi + ':' + ii]).length;
     return `<div class="grp ${n ? 'has' : ''}"><div class="gh">${esc(g.g)}</div><div class="gs ${n ? 'bad' : 'okc'}">${esc(grpState(g, n))}</div>
-      <div class="opts">${g.items.map((it, ii) => { const k = gi + ':' + ii, on = V.defects[k], ms = marksOf(g); return `<button type="button" class="opt ${on ? 'on' : ''}" onclick="togDef(${gi},${ii})"><span class="ot">${esc(it)}${g.hints && g.hints[ii] ? `<span class="oh">${esc(g.hints[ii])}</span>` : ''}</span><span class="os">${on ? (on === '?' ? '✕ vyberte' : '✕ ' + esc(on)) : 'v pořádku'}</span></button>`
+      <div class="opts">${g.items.map((it, ii) => { const k = gi + ':' + ii, on = V.defects[k], ms = marksOf(g); return `<button type="button" class="opt ${on ? 'on' : ''}" onclick="togDef(${gi},${ii})"><span class="ot">${esc(it)}${g.hints && g.hints[ii] ? `<span class="oh">${esc(g.hints[ii])}</span>` : ''}</span>${on ? `<span class="os">${on === '?' ? '✕ vyberte' : '✕ ' + esc(on)}</span>` : '<span class="os ok" aria-label="v pořádku"></span>'}</button>`
         + (on ? `<div class="onote">${ms.length > 1 ? `<div class="mk" id="mk_${gi}_${ii}">${ms.map(m => `<button type="button" class="${on === m ? 'on' : ''}" onclick="setMark(${gi},${ii},'${esc(m)}')">${esc(m)}</button>`).join('')}</div>` : ''}${noteBox(gi, ii, on)}</div>` : ''); }).join('')}</div></div>`;
   }).join('');
   defBox();
@@ -596,9 +598,9 @@ function defBox(){
 function noteBox(gi, ii, m){
   const k = gi + ':' + ii;
   if(m === '?') return '';
-  if(needNote(m) || V.open[k] || V.notes[k])
+  if(needNote(m))
     return `<textarea id="dn_${gi}_${ii}" maxlength="400" placeholder="${needNote(m) ? 'Popište ' + (m === 'poškozeno' ? 'poškození' : 'závadu') + ' – co, kde, jak se projevuje (povinné)' : 'Poznámka (nepovinné)'}" oninput="V.notes['${k}']=this.value;ready()">${esc(V.notes[k] || '')}</textarea>`;
-  return `<button type="button" class="addn" onclick="openNote(${gi},${ii})">+ přidat poznámku</button> <span style="font-size:13px;color:var(--muted)">(nepovinné)</span>`;
+  return '';   // V3.16: u „chybí“ a „nízký stav“ bez poznámky (stačí doplňující popis dole)
 }
 function openNote(gi, ii){ V.open[gi + ':' + ii] = 1; renderGroups(); const ta = $('dn_' + gi + '_' + ii); if(ta) ta.focus({ preventScroll:true }); }
 function marksOf(g){ return g.marks && g.marks.length ? g.marks : [g.mark || 'závada']; }
