@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -236,7 +236,7 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 <script>
 /* V3.14: automatická aktualizace – ikona na ploše (hlavně iPhone) drží starou stránku v mezipaměti.
    Po otevření se stránka zeptá GitHubu na aktuální verzi; když je novější, sama se načte znovu. */
-const APP_VER = '3.17';
+const APP_VER = '3.18';
 async function checkUpdate(){
   try{
     const r = await fetch('./?nocache=' + Date.now(), { cache:'no-store' });
@@ -618,9 +618,9 @@ function grpState(g, n){
   const pol = c => c === 1 ? 'položka' : (c < 5 ? 'položky' : 'položek'), pol2 = c => c === 1 ? 'položky' : 'položek';
   return Object.keys(cnt).map(m => {
     const c = cnt[m];
-    if(m === 'chybí') return `chybí ${c} ${pol(c)}`;
+    if(m === 'chybí') return `chybí: ${c} ${pol(c)}`;
     if(m === 'poškozeno') return `poškozeno: ${c} ${pol(c)}`;
-    if(m === 'nízký stav') return `nízký stav u ${c} ${pol2(c)}`;
+    if(m === 'nízký stav') return `nízký stav: ${c} ${pol(c)}`;
     if(m === '?') return `vyberte chybí / poškozeno`;
     return `${c} ${c === 1 ? 'závada' : (c < 5 ? 'závady' : 'závad')}`;
   }).join(' · ');
