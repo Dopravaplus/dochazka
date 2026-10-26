@@ -8,7 +8,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Dopravaplus">
-<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn · V3.23 vycentrované texty · V3.24 oddíl Základní údaje · V3.25 fotky u každé závady · V3.26 soukromá platební karta · V3.27 dříve nahlášené závady (popis na vlastním řádku) · V3.28 kratší údaj u nahlášené závady · V3.29 po odeslání návrat na úvod, formulář bez předvyplněného vozidla · V3.30–3.31 potvrzení s časem, zmizí po otevření další dlaždice · V3.32 „závada od …“ s rokem · V3.33 bez „garážmistr řeší“ · V3.34 potvrzení tankování bez litrů -->
+<!-- V3.0 – 23.10.2026: dlaždice Docházka / Kontrola vozidla / Tankování · V3.1 fotka účtenky povinná jen při platbě hotově · V3.2 vozidla po pobočkách, závady pod sebou · V3.3 šedý popis pod položkou, „nízký stav“ · V3.4 název aplikace Dopravaplus · V3.5 bez zdvojeného nadpisu u kontroly a tankování · V3.6 stav skupiny pod názvem, zvýrazněné názvy skupin · V3.7 popis u každé závady zvlášť · V3.8 výbava: chybí / poškozeno · V3.9 nejdřív druh, nepovinná poznámka na rozbalení · V3.10 „(nepovinné)“ u poznámky · V3.11 tlačítko Odeslat kontrolu zmodrá, až je vše vyplněné · V3.12 chyby přímo u políček, posun na první chybu · V3.13 totéž u tankování a docházky, kratší potvrzení · V3.14 automatická aktualizace · V3.15 barvy: barevné dlaždice, jemně modré pozadí · V3.16 kolečko místo „v pořádku“, bez nepovinných poznámek · V3.17 vyplněná závada se sbalí, bez křížku · V3.18 jednotný souhrn skupiny · V3.19 závěr kontroly v oddílech · V3.20 popis a fotky vždy viditelné · V3.21 oddíl Vozidlo nahoře · V3.22 kratší pokyn · V3.23 vycentrované texty · V3.24 oddíl Základní údaje · V3.25 fotky u každé závady · V3.26 soukromá platební karta · V3.27 dříve nahlášené závady (popis na vlastním řádku) · V3.28 kratší údaj u nahlášené závady · V3.29 po odeslání návrat na úvod, formulář bez předvyplněného vozidla · V3.30–3.31 potvrzení s časem, zmizí po otevření další dlaždice · V3.32 „závada od …“ s rokem · V3.33 bez „garážmistr řeší“ · V3.34 potvrzení tankování bez litrů · V3.35 kontrola km, sbalené „Moje poslední“, hláška při slabém signálu · V3.36 hranice 800 km -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
@@ -94,6 +94,10 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 .opt .kn-note{display:block;font-size:13px;font-weight:600;color:var(--amber);margin-top:3px}
 .nzban{background:var(--red);color:#fff;border-radius:12px;padding:12px 14px;font-weight:800;font-size:14.5px;line-height:1.4;margin-top:14px;text-align:center}
 .gs.okc{color:var(--green)}
+.listtog{width:100%;border:0;background:none;font-family:inherit;font-size:16px;font-weight:800;color:var(--text);text-align:left;padding:0;display:flex;justify-content:space-between;align-items:center}
+.listtog::after{content:'›';font-size:22px;color:#98a2b3;transform:rotate(90deg);transition:transform .15s}
+.listtog.open::after{transform:rotate(-90deg)}
+#vehList{margin-top:12px}
 .gs.mut{color:var(--muted);font-weight:600}
 .secbox{border:1px solid var(--line);border-radius:12px;padding:14px;background:#fff}
 .infobox{margin:18px 0 12px;background:#eef3fc;border:1px solid #d3e0f7;color:#1d3a6b;border-radius:12px;padding:11px 13px;font-size:14px;line-height:1.4}
@@ -224,8 +228,8 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 
   <!-- V3.0 Moje záznamy vozidel -->
   <div id="vehListCard" class="card hidden">
-    <h2 id="vehListTitle">Moje záznamy</h2>
-    <div id="vehList"><div class="empty">Zatím nic.</div></div>
+    <button type="button" class="listtog" id="vehListTitle" onclick="V.listOpen=!V.listOpen;renderVehList()">Moje záznamy</button>
+    <div id="vehList" class="hidden"><div class="empty">Zatím nic.</div></div>
   </div>
 
   <!-- Zápis dne -->
@@ -265,7 +269,7 @@ body.home{background:linear-gradient(var(--blue) 0,var(--blue) 120px,var(--bg) 1
 <script>
 /* V3.14: automatická aktualizace – ikona na ploše (hlavně iPhone) drží starou stránku v mezipaměti.
    Po otevření se stránka zeptá GitHubu na aktuální verzi; když je novější, sama se načte znovu. */
-const APP_VER = '3.34';
+const APP_VER = '3.36';
 async function checkUpdate(){
   try{
     const r = await fetch('./?nocache=' + Date.now(), { cache:'no-store' });
@@ -298,12 +302,27 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbyX7rO09p-2zUdZoR0ISi_Z
 async function call(fn, arg){
   let r;
   try{
-    r = await fetch(API_URL, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, arg: arg || {} }) });
-  }catch(e){ throw 'Nepodařilo se spojit se serverem – zkontrolujte připojení k internetu.'; }
+    const ctl = window.AbortController ? new AbortController() : null;
+    const tm = ctl ? setTimeout(() => ctl.abort(), 90000) : 0;      // V3.35: při velmi slabém signálu to po 90 s vzdá
+    r = await fetch(API_URL, { method:'POST', headers:{ 'Content-Type':'text/plain;charset=utf-8' }, body: JSON.stringify({ fn, arg: arg || {} }), signal: ctl ? ctl.signal : undefined });
+    clearTimeout(tm);
+  }catch(e){ throw NET_ERR; }
   let j;
   try{ j = await r.json(); }catch(e){ throw 'Server odpověděl neočekávaně – zkuste to prosím znovu.'; }
   if(!j || !j.ok) throw (j && j.error) || 'Neznámá chyba.';
   return j.data;
+}
+/* V3.35: srozumitelná hláška při výpadku signálu */
+const NET_ERR = 'Bez spojení se serverem – zkontrolujte signál a zkuste to znovu.';
+function netTxt(e){ return e === NET_ERR ? 'Nepodařilo se odeslat – slabý nebo žádný signál. Vyplněné údaje zůstaly, zkuste to znovu.' : e; }
+/* V3.35: kontrola stavu km proti poslednímu známému – překlep musí řidič potvrdit */
+const KM_JUMP = 800;   // V3.36: víc najetých km od posledního známého stavu = dotaz, zda je číslo správně
+async function kmOk(code, km){
+  const v = vehOf(code), last = v && v.lastKm, k = Number(km) || 0;
+  if(!last || !k) return true;
+  if(k < last) return ask(`Zadaný stav ${fmtKm(k)} km je nižší než poslední známý stav ${fmtKm(last)} km. Je číslo správně?`, 'Je správně', true);
+  if(k - last > KM_JUMP) return ask(`Zadaný stav ${fmtKm(k)} km je o ${fmtKm(k - last)} km vyšší než poslední známý stav. Je číslo správně?`, 'Je správně', true);
+  return true;
 }
 function isoShift(iso, days){
   const p = iso.split('-').map(Number); const d = new Date(p[0], p[1]-1, p[2] + days, 12);
@@ -391,6 +410,7 @@ async function openView(v){
   msg('homeMsg', '', '');
   if(v !== 'home'){ try{ history.pushState({ v }, '', '#' + v); }catch(e){} }
   showView(v);
+  V.listOpen = false;
   if(v === 'att') return;
   if(!V.data){
     busy(true, 'Načítám vozidla…');
@@ -445,7 +465,7 @@ async function send(){
     resetForm();
   }catch(e){
     if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); }
-    else msg('formMsg', 'err', e);
+    else msg('formMsg', 'err', netTxt(e));
   }finally{ $('sendBtn').disabled = false; busy(false); }
 }
 async function delEntry(id){
@@ -457,9 +477,10 @@ async function delEntry(id){
   finally{ busy(false); }
 }
 /* potvrzení v aplikaci (bez dialogu prohlížeče) */
-function ask(text, okLabel){
+function ask(text, okLabel, blue){
   return new Promise(res => {
     const box = $('ask'); $('askText').textContent = text; $('askOk').textContent = okLabel || 'OK';
+    $('askOk').style.background = blue ? 'var(--blue)' : '#b42318';
     box.classList.remove('hidden');
     const done = v => { box.classList.add('hidden'); $('askOk').onclick = null; $('askNo').onclick = null; res(v); };
     $('askOk').onclick = () => done(true); $('askNo').onclick = () => done(false);
@@ -485,7 +506,7 @@ function renderList(){
 
 /* ================= V3.0 VOZIDLA ================= */
 function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
-function fmtKm(n){ return String(Math.round(n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, ' '); }
+function fmtKm(n){ return String(Math.round(n || 0)).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00a0'); }   // nezalomitelná mezera
 function vehOptions(sel){
   const last = '';   // V3.29: vozidlo se nepředvyplňuje – řidič ho vybere vždy znovu (menší riziko záměny)
   const vs = (V.data && V.data.vehicles) || [];
@@ -502,7 +523,7 @@ function kmHint(p){
   if(!v || !v.lastKm){ el.textContent = ''; el.className = 'kmhint'; return; }
   const km = Number($(p + 'Km').value) || 0;
   if(km && km < v.lastKm){ el.className = 'kmhint w'; el.textContent = `Pozor: méně než poslední známý stav ${fmtKm(v.lastKm)} km.`; }
-  else if(km && km - v.lastKm > 3000){ el.className = 'kmhint w'; el.textContent = `Pozor: o ${fmtKm(km - v.lastKm)} km víc než poslední známý stav – zkontrolujte číslo.`; }
+  else if(km && km - v.lastKm > KM_JUMP){ el.className = 'kmhint w'; el.textContent = `Pozor: o ${fmtKm(km - v.lastKm)} km víc než poslední známý stav – zkontrolujte číslo.`; }
   else { el.className = 'kmhint'; el.textContent = `Poslední známý stav: ${fmtKm(v.lastKm)} km`; }
 }
 /* fotky – mobil je před odesláním zmenší (max 1600 px, JPEG) */
@@ -760,6 +781,7 @@ async function sendCheck(){
     TRIED.check = true; showErrs('checkCard', errs); goFirstErr(errs);
     return;
   }
+  if(!(await kmOk(vehicle, km))){ $('cKm').scrollIntoView({ behavior:'smooth', block:'center' }); setTimeout(() => $('cKm').focus({ preventScroll:true }), 350); return; }
   $('cSend').disabled = true; busy(true, (V.cPhotos.length || Object.values(V.dPhotos).some(a => a.length)) ? 'Odesílám kontrolu a fotky…' : 'Odesílám kontrolu…');
   try{
     V.data = await call('mVehCheck', { token:S.token, uid:uid(), vehicle, km, defects, notes, desc, ok:V.ok, confirm:true,
@@ -769,7 +791,7 @@ async function sendCheck(){
     homeOk(defects.length ? `Kontrola ${vehicle} odeslána – nahlášeno: ${defects.length} ${defects.length === 1 ? 'položka' : (defects.length < 5 ? 'položky' : 'položek')}.` : `Kontrola ${vehicle} odeslána – vše bez závad.`);
     resetCheck(); renderVehList(); msg('checkMsg', '', ''); goHome();   // V3.29: zpět na úvod s potvrzením
   }catch(e){
-    if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); } else msg('checkMsg', 'err', e);
+    if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); } else msg('checkMsg', 'err', netTxt(e));
   }finally{ $('cSend').disabled = false; busy(false); window.scrollTo({ top:0, behavior:'smooth' }); }
 }
 
@@ -795,6 +817,7 @@ async function sendFuel(){
   msg('fuelMsg', '', '');
   const errs = fuelErrs();
   if(errs.length){ TRIED.fuel = true; showErrs('fuelCard', errs); goFirstErr(errs); return; }
+  if(!(await kmOk(vehicle, km))){ $('tKm').scrollIntoView({ behavior:'smooth', block:'center' }); setTimeout(() => $('tKm').focus({ preventScroll:true }), 350); return; }
   $('tSend').disabled = true; busy(true, V.tPhotos.length ? 'Odesílám tankování a účtenku…' : 'Odesílám tankování…');
   try{
     V.data = await call('mVehFuel', { token:S.token, uid:uid(), vehicle, date, km, liters, pay, note:$('tNote').value,
@@ -803,7 +826,7 @@ async function sendFuel(){
     homeOk(`Tankování ${vehicle} odesláno.`);
     resetFuel(); renderVehList(); msg('fuelMsg', '', ''); goHome();
   }catch(e){
-    if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); } else msg('fuelMsg', 'err', e);
+    if(/vypršelo/i.test(e)){ store.del('m_token'); showLogin(); msg('loginMsg', 'err', e); } else msg('fuelMsg', 'err', netTxt(e));
   }finally{ $('tSend').disabled = false; busy(false); window.scrollTo({ top:0, behavior:'smooth' }); }
 }
 async function delFuel(id){
@@ -815,8 +838,10 @@ async function delFuel(id){
 }
 function renderVehList(){
   const kind = S.view === 'check' ? 'check' : 'fuel';
-  $('vehListTitle').textContent = kind === 'check' ? 'Moje kontroly' : 'Moje tankování';
-  const items = ((V.data && V.data.mine) || []).filter(x => x.kind === kind);
+  const items = ((V.data && V.data.mine) || []).filter(x => x.kind === kind).slice(0, 5);   // V3.35: jen posledních 5, sbalené
+  $('vehListTitle').textContent = (kind === 'check' ? 'Moje poslední kontroly' : 'Moje poslední tankování') + ` (${items.length})`;
+  $('vehListTitle').classList.toggle('open', !!V.listOpen);
+  $('vehList').classList.toggle('hidden', !V.listOpen);
   if(!items.length){ $('vehList').innerHTML = '<div class="empty">Za poslední měsíc zatím nic.</div>'; return; }
   $('vehList').innerHTML = items.map(x => {
     if(kind === 'check'){
